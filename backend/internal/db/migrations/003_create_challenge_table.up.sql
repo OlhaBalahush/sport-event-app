@@ -1,5 +1,5 @@
 -- +migrate Up
-CREATE TABLE challenges (
+CREATE TABLE IF NOT EXISTS challenges (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   challenge_name VARCHAR(255),
   organization_name TEXT,

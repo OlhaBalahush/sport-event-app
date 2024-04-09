@@ -1,5 +1,5 @@
 -- +migrate Up
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
   id SERIAL PRIMARY KEY,
   receiver_id UUID REFERENCES users(id),
   data TEXT,

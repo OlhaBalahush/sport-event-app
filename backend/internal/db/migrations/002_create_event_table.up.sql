@@ -1,5 +1,5 @@
 -- +migrate Up
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   event_name VARCHAR(255),
   organizer_id UUID REFERENCES users(id),
