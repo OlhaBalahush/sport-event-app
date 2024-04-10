@@ -1,25 +1,17 @@
-package db
+package sqlstore
 
 import (
-	"database/sql"
 	"log"
-
-	"example.com/sport-event-app/backend/internal/db/models"
+	"sport-event-app/backend/internal/models"
 )
 
-// EventRepository provides methods for event-related database operations
 type EventRepository struct {
-	db *sql.DB
+	store *Store
 }
 
-// NewEventRepository creates a new EventRepository instance
-func NewEventRepository(db *sql.DB) *EventRepository {
-	return &EventRepository{db: db}
-}
-
-// CreateEvent inserts a new event into the database
-func (er *EventRepository) CreateEvent(event *models.Event) error {
-	_, err := er.db.Exec("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+// Create implements store.EventRepository.
+func (er *EventRepository) Create(event *models.Event) error {
+	_, err := er.store.db.Exec("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
 		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation)
 	if err != nil {
 		log.Println("Failed to create event:", err)
@@ -28,21 +20,19 @@ func (er *EventRepository) CreateEvent(event *models.Event) error {
 	return nil
 }
 
-// GetEventByID retrieves an event from the database by ID
-func (er *EventRepository) GetEventByID(id string) (*models.Event, error) {
-	row := er.db.QueryRow("SELECT id, event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, created_at FROM events WHERE id = $1", id)
-	event := &models.Event{}
-	err := row.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.CreatedAt)
+// Delete implements store.EventRepository.
+func (er *EventRepository) Delete(id string) error {
+	_, err := er.store.db.Exec("DELETE FROM events WHERE id=$1", id)
 	if err != nil {
-		log.Println("Failed to get event by ID:", err)
-		return nil, err
+		log.Println("Failed to delete event:", err)
+		return err
 	}
-	return event, nil
+	return nil
 }
 
 // GetAllEvents retrieves all events from the database
-func (er *EventRepository) GetAllEvents() ([]*models.Event, error) {
-	rows, err := er.db.Query("SELECT id, event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, created_at FROM events")
+func (er *EventRepository) Read() ([]*models.Event, error) {
+	rows, err := er.store.db.Query("SELECT id, event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, created_at FROM events")
 	if err != nil {
 		log.Println("Failed to get all events:", err)
 		return nil, err
@@ -68,8 +58,8 @@ func (er *EventRepository) GetAllEvents() ([]*models.Event, error) {
 }
 
 // UpdateEvent updates an existing event in the database
-func (er *EventRepository) UpdateEvent(event *models.Event) error {
-	_, err := er.db.Exec("UPDATE events SET event_name=$1, organizer_id=$2, date_start=$3, date_end=$4, location=$5, description=$6, requirements=$7, preparation=$8 WHERE id=$9",
+func (er *EventRepository) Update(event *models.Event) error {
+	_, err := er.store.db.Exec("UPDATE events SET event_name=$1, organizer_id=$2, date_start=$3, date_end=$4, location=$5, description=$6, requirements=$7, preparation=$8 WHERE id=$9",
 		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation, event.ID)
 	if err != nil {
 		log.Println("Failed to update event:", err)
@@ -78,18 +68,20 @@ func (er *EventRepository) UpdateEvent(event *models.Event) error {
 	return nil
 }
 
-// DeleteEvent deletes an existing event from the database
-func (er *EventRepository) DeleteEvent(id string) error {
-	_, err := er.db.Exec("DELETE FROM events WHERE id=$1", id)
+// GetEventByID retrieves an event from the database by ID
+func (er *EventRepository) FindByID(id string) (*models.Event, error) {
+	row := er.store.db.QueryRow("SELECT id, event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, created_at FROM events WHERE id = $1", id)
+	event := &models.Event{}
+	err := row.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.CreatedAt)
 	if err != nil {
-		log.Println("Failed to delete event:", err)
-		return err
+		log.Println("Failed to get event by ID:", err)
+		return nil, err
 	}
-	return nil
+	return event, nil
 }
 
 // GetEventsByCategoryName gets all events what has category with categoryName
-func (er *EventRepository) GetEventsByCategoryName(categoryName string) ([]*models.Event, error) {
+func (er *EventRepository) GetByCategoryName(categoryName string) ([]*models.Event, error) {
 	// Prepare the SQL query
 	query := `
         SELECT e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.created_at
@@ -100,7 +92,7 @@ func (er *EventRepository) GetEventsByCategoryName(categoryName string) ([]*mode
     `
 
 	// Execute the query
-	rows, err := er.db.Query(query, categoryName)
+	rows, err := er.store.db.Query(query, categoryName)
 	if err != nil {
 		log.Println("Failed to execute query:", err)
 		return nil, err
@@ -136,7 +128,7 @@ func (er *EventRepository) GetSavedEventsForUser(userID string) ([]*models.Event
     `
 
 	// Execute the query
-	rows, err := er.db.Query(query, userID)
+	rows, err := er.store.db.Query(query, userID)
 	if err != nil {
 		log.Println("Failed to execute query:", err)
 		return nil, err
@@ -172,7 +164,7 @@ func (er *EventRepository) GetEventsParticipatedByUser(userID string) ([]*models
     `
 
 	// Execute the query
-	rows, err := er.db.Query(query, userID)
+	rows, err := er.store.db.Query(query, userID)
 	if err != nil {
 		log.Println("Failed to execute query:", err)
 		return nil, err

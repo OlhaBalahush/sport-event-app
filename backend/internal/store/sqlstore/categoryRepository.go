@@ -1,25 +1,18 @@
-package db
+package sqlstore
 
 import (
-	"database/sql"
 	"log"
-
-	"example.com/sport-event-app/backend/internal/db/models"
+	"sport-event-app/backend/internal/models"
 )
 
-// CategoryRepository provides methods for category-related database operations
 type CategoryRepository struct {
-	db *sql.DB
+	store *Store
 }
 
-// NewCategoryRepository creates a new CategoryRepository instance
-func NewCategoryRepository(db *sql.DB) *CategoryRepository {
-	return &CategoryRepository{db: db}
-}
 
 // CreateCategory inserts a new category into the database
-func (cr *CategoryRepository) CreateCategory(category *models.Category) error {
-	_, err := cr.db.Exec("INSERT INTO categories (name) VALUES ($1)", category.Name)
+func (cr *CategoryRepository) Create(category *models.Category) error {
+	_, err := cr.store.db.Exec("INSERT INTO categories (name) VALUES ($1)", category.Name)
 	if err != nil {
 		log.Println("Failed to create category:", err)
 		return err
@@ -28,8 +21,8 @@ func (cr *CategoryRepository) CreateCategory(category *models.Category) error {
 }
 
 // GetCategoryByID retrieves a category from the database by ID
-func (cr *CategoryRepository) GetCategoryByID(id int) (*models.Category, error) {
-	row := cr.db.QueryRow("SELECT id, name FROM categories WHERE id = $1", id)
+func (cr *CategoryRepository) FindByID(id int) (*models.Category, error) {
+	row := cr.store.db.QueryRow("SELECT id, name FROM categories WHERE id = $1", id)
 	category := &models.Category{}
 	err := row.Scan(&category.ID, &category.Name)
 	if err != nil {
@@ -40,8 +33,8 @@ func (cr *CategoryRepository) GetCategoryByID(id int) (*models.Category, error) 
 }
 
 // GetAllCategories retrieves all categories from the database
-func (cr *CategoryRepository) GetAllCategories() ([]*models.Category, error) {
-	rows, err := cr.db.Query("SELECT id, name FROM categories")
+func (cr *CategoryRepository) Read() ([]*models.Category, error) {
+	rows, err := cr.store.db.Query("SELECT id, name FROM categories")
 	if err != nil {
 		log.Println("Failed to get all categories:", err)
 		return nil, err
@@ -67,8 +60,8 @@ func (cr *CategoryRepository) GetAllCategories() ([]*models.Category, error) {
 }
 
 // UpdateCategory updates an existing category in the database
-func (cr *CategoryRepository) UpdateCategory(category *models.Category) error {
-	_, err := cr.db.Exec("UPDATE categories SET name=$1 WHERE id=$2", category.Name, category.ID)
+func (cr *CategoryRepository) Update(category *models.Category) error {
+	_, err := cr.store.db.Exec("UPDATE categories SET name=$1 WHERE id=$2", category.Name, category.ID)
 	if err != nil {
 		log.Println("Failed to update category:", err)
 		return err
@@ -77,8 +70,8 @@ func (cr *CategoryRepository) UpdateCategory(category *models.Category) error {
 }
 
 // DeleteCategory deletes an existing category from the database
-func (cr *CategoryRepository) DeleteCategory(id int) error {
-	_, err := cr.db.Exec("DELETE FROM categories WHERE id=$1", id)
+func (cr *CategoryRepository) Delete(id int) error {
+	_, err := cr.store.db.Exec("DELETE FROM categories WHERE id=$1", id)
 	if err != nil {
 		log.Println("Failed to delete category:", err)
 		return err
@@ -87,7 +80,7 @@ func (cr *CategoryRepository) DeleteCategory(id int) error {
 }
 
 // GetCategoriesByUserID retrieves all categories associated with a specific user ID
-func (cr *CategoryRepository) GetCategoriesByFRID(id string, flag string) ([]*models.Category, error) {
+func (cr *CategoryRepository) GetByFRID(id string, flag string) ([]*models.Category, error) {
 	// Prepare the SQL query
 	query := `
 	SELECT c.name
@@ -102,7 +95,7 @@ func (cr *CategoryRepository) GetCategoriesByFRID(id string, flag string) ([]*mo
 	`
 
 	// Execute the query
-	rows, err := cr.db.Query(query, flag, id)
+	rows, err := cr.store.db.Query(query, flag, id)
 	if err != nil {
 		log.Println("Failed to execute query:", err)
 		return nil, err

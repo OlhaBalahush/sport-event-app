@@ -1,12 +1,31 @@
 package main
 
 import (
-	"example.com/sport-event-app/backend/internal/db"
+	"flag"
+	"log"
+	"os"
+	"sport-event-app/backend/internal/app/server"
 )
 
-func main() {
-	dbConn := db.ConnectDB()
-	defer dbConn.Close()
+var configPath string
 
-	db.MigrateUp()
+func init() {
+	jwtKey := os.Getenv("JWT_KEY")
+	if jwtKey == "" {
+		log.Fatalf("error: env variable JWT_KEY is not set")
+	}
+
+	flag.StringVar(&configPath, "config-path", "./../configs/config.json", "path to config")
+}
+
+func main() {
+	flag.Parse()
+
+	config := server.NewConfig()
+	err := config.ReadConfig(configPath)
+	if err != nil {
+		log.Fatalf("Error reading config file: %s\n", err)
+	}
+
+	log.Fatal(server.Start(config))
 }
