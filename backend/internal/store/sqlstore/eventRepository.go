@@ -12,6 +12,7 @@ type EventRepository struct {
 // Create implements store.EventRepository.
 func (er *EventRepository) Create(event *models.Event) (string, error) {
 	var id string
+	// Insert event data into the events table
 	err := er.store.db.QueryRow("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation).Scan(&id)
 	if err != nil {
@@ -19,11 +20,27 @@ func (er *EventRepository) Create(event *models.Event) (string, error) {
 		return "", err
 	}
 
+	// Insert image URLs into the images table
+	for _, img := range event.Imgs {
+		_, err := er.store.db.Exec("INSERT INTO images (event_id, img) VALUES ($1, $2)", id, img)
+		if err != nil {
+			log.Println("Failed to insert image URL:", err)
+			return "", err
+		}
+	}
+
 	return id, nil
 }
 
 // Delete implements store.EventRepository.
 func (er *EventRepository) Delete(id string) error {
+	// Delete images for the event
+    if err := er.DeleteImagesByEventID(id); err != nil {
+        log.Println("Failed to delete images for event:", err)
+        return err
+    }
+
+	// Delete the event
 	_, err := er.store.db.Exec("DELETE FROM events WHERE id=$1", id)
 	if err != nil {
 		log.Println("Failed to delete event:", err)
@@ -49,6 +66,14 @@ func (er *EventRepository) Read() ([]*models.Event, error) {
 			log.Println("Failed to scan event row:", err)
 			return nil, err
 		}
+		// Fetch images for the event
+		images, err := er.GetImagesByEventID(event.ID)
+		if err != nil {
+			log.Println("Failed to get images for event:", err)
+			return nil, err
+		}
+		event.Imgs = images
+
 		events = append(events, event)
 	}
 	if err := rows.Err(); err != nil {
@@ -79,6 +104,15 @@ func (er *EventRepository) FindByID(id string) (*models.Event, error) {
 		log.Println("Failed to get event by ID:", err)
 		return nil, err
 	}
+
+	// Fetch images for the event
+	images, err := er.GetImagesByEventID(event.ID)
+	if err != nil {
+		log.Println("Failed to get images for event:", err)
+		return nil, err
+	}
+	event.Imgs = images
+
 	return event, nil
 }
 
@@ -109,6 +143,14 @@ func (er *EventRepository) GetByCategoryName(categoryName string) ([]*models.Eve
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}
+		// Fetch images for the event
+		images, err := er.GetImagesByEventID(event.ID)
+		if err != nil {
+			log.Println("Failed to get images for event:", err)
+			return nil, err
+		}
+		event.Imgs = images
+
 		events = append(events, event)
 	}
 	if err := rows.Err(); err != nil {
@@ -145,6 +187,14 @@ func (er *EventRepository) GetSavedEventsForUser(userID string) ([]*models.Event
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}
+		// Fetch images for the event
+		images, err := er.GetImagesByEventID(event.ID)
+		if err != nil {
+			log.Println("Failed to get images for event:", err)
+			return nil, err
+		}
+		event.Imgs = images
+
 		events = append(events, event)
 	}
 	if err := rows.Err(); err != nil {
@@ -181,6 +231,13 @@ func (er *EventRepository) GetEventsParticipatedByUser(userID string) ([]*models
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}
+		// Fetch images for the event
+		images, err := er.GetImagesByEventID(event.ID)
+		if err != nil {
+			log.Println("Failed to get images for event:", err)
+			return nil, err
+		}
+		event.Imgs = images
 		events = append(events, event)
 	}
 	if err := rows.Err(); err != nil {
@@ -189,4 +246,39 @@ func (er *EventRepository) GetEventsParticipatedByUser(userID string) ([]*models
 	}
 
 	return events, nil
+}
+
+func (er *EventRepository) GetImagesByEventID(eventID string) ([]string, error) {
+	rows, err := er.store.db.Query("SELECT img FROM images WHERE event_id = $1", eventID)
+	if err != nil {
+		log.Println("Failed to get images for event:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var images []string
+	for rows.Next() {
+		var img string
+		if err := rows.Scan(&img); err != nil {
+			log.Println("Failed to scan image row:", err)
+			return nil, err
+		}
+		images = append(images, img)
+	}
+	if err := rows.Err(); err != nil {
+		log.Println("Error iterating over image rows:", err)
+		return nil, err
+	}
+
+	return images, nil
+}
+
+// DeleteImagesByEventID deletes images for an event by its ID
+func (er *EventRepository) DeleteImagesByEventID(eventID string) error {
+    _, err := er.store.db.Exec("DELETE FROM images WHERE event_id = $1", eventID)
+    if err != nil {
+        log.Println("Failed to delete images for event:", err)
+        return err
+    }
+    return nil
 }

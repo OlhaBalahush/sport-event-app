@@ -22,6 +22,9 @@ type EventRepository interface {
 	GetByCategoryName(categoryName string) ([]*models.Event, error)
 	GetSavedEventsForUser(userID string) ([]*models.Event, error)
 	GetEventsParticipatedByUser(userID string) ([]*models.Event, error)
+
+	GetImagesByEventID(eventID string) ([]string, error)
+	DeleteImagesByEventID(eventID string) error
 }
 
 type ChallengeRepository interface {

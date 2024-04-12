@@ -13,6 +13,6 @@ type Event struct {
 	Description  string
 	Requirements string
 	Preparation  string
-	Img          string
+	Imgs         []string
 	CreatedAt    time.Time
 }
