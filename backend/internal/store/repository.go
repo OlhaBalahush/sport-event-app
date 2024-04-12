@@ -47,9 +47,9 @@ type CategoryRepository interface {
 }
 
 type FeedbackRepository interface {
-	Create(user *models.EventFeedback) error
+	Create(user *models.EventFeedback) (int, error)
 	Update(user *models.EventFeedback) error
-	Read() ([]*models.EventFeedback, error)
+	Read(eventID string) ([]*models.EventFeedback, error)
 	Delete(id string) error
 }
 

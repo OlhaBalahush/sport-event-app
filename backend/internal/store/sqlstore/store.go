@@ -6,15 +6,15 @@ import (
 )
 
 type Store struct {
-	db             *sql.DB
-	userRepository *UserRepository
-	eventRepository *EventRepository
-	challengeRepository *ChallengeRepository
-	feedbackRepository *FeedbackRepository
-	participantRepository *ParticipantRepository
-	requestRepository *RequestRepository
+	db                     *sql.DB
+	userRepository         *UserRepository
+	eventRepository        *EventRepository
+	challengeRepository    *ChallengeRepository
+	feedbackRepository     *FeedbackRepository
+	participantRepository  *ParticipantRepository
+	requestRepository      *RequestRepository
 	notificationRepository *NotificationRepository
-	categoryRepository *CategoryRepository
+	categoryRepository     *CategoryRepository
 }
 
 func New(db *sql.DB) *Store {
