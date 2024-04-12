@@ -65,15 +65,15 @@ type ParticipantRepository interface {
 }
 
 type RequestRepository interface {
-	Create(user *models.Request) error
-	Update(user *models.Request) error
+	Create(request *models.Request) (int, error)
+	Update(request *models.Request) error
 	Read() ([]*models.Request, error)
 	Delete(id string) error
 }
 
 type NotificationRepository interface {
-	Create(user *models.Notification) (int, error)
-	Update(user *models.Notification) error
+	Create(notification *models.Notification) (int, error)
+	Update(notification *models.Notification) error
 	Read(userID string) ([]*models.Notification, error)
 	Delete(id string) error
 }
