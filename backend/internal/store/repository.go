@@ -68,8 +68,8 @@ type RequestRepository interface {
 }
 
 type NotificationRepository interface {
-	Create(user *models.Notification) error
+	Create(user *models.Notification) (int, error)
 	Update(user *models.Notification) error
-	Read() ([]*models.Notification, error)
+	Read(userID string) ([]*models.Notification, error)
 	Delete(id string) error
 }
