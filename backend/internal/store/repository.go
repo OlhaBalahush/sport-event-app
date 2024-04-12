@@ -54,10 +54,14 @@ type FeedbackRepository interface {
 }
 
 type ParticipantRepository interface {
-	Create(user *models.Participant) error
-	Update(user *models.Participant) error
-	Read() ([]*models.Participant, error)
-	Delete(id string) error
+	AddEventParticipant(userID, eventID string) error
+	RemoveEventParticipant(userID, eventID string) error
+	GetEventParticipantsByID(eventID string) ([]*models.Participant, error)
+
+	AddChallengeParticipant(userID, challengeID string, points int) error
+	RemoveChallengeParticipant(userID, challengeID string) error
+	UpdateChallengeParticipantPoints(userID, challengeID string, points int) error
+	GetChallengeParticipantsByID(challengeID string) ([]*models.Participant, error)
 }
 
 type RequestRepository interface {
