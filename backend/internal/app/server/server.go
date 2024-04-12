@@ -69,7 +69,7 @@ func (s *server) test() http.HandlerFunc {
 			return
 		}
 
-		 err := s.store.User().Create(user)
+		_, err := s.store.User().Create(user)
 		if err != nil {
 			s.error(w, r, http.StatusInternalServerError, err)
 			return

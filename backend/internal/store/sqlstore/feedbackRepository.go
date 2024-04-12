@@ -19,14 +19,14 @@ func (fr *FeedbackRepository) Create(feedback *models.EventFeedback) (int, error
     `
 
     // Execute the query
-    var feedbackID int
-    err := fr.store.db.QueryRow(query, feedback.EventID, feedback.UserID, feedback.Comment, feedback.Img, feedback.Rate, feedback.CreatedAt).Scan(&feedbackID)
+    var id int
+    err := fr.store.db.QueryRow(query, feedback.EventID, feedback.UserID, feedback.Comment, feedback.Img, feedback.Rate, feedback.CreatedAt).Scan(&id)
     if err != nil {
         log.Println("Failed to execute query:", err)
         return 0, err
     }
 
-    return feedbackID, nil
+    return id, nil
 }
 
 // Delete deletes an event feedback record by ID

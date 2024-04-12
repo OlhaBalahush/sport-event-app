@@ -19,7 +19,7 @@ func (s *server) handlerCreateUser() http.HandlerFunc {
 			return
 		}
 
-		if err := s.store.User().Create(user); err != nil {
+		if _, err := s.store.User().Create(user); err != nil {
 			s.error(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}

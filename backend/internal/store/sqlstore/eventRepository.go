@@ -10,14 +10,16 @@ type EventRepository struct {
 }
 
 // Create implements store.EventRepository.
-func (er *EventRepository) Create(event *models.Event) error {
-	_, err := er.store.db.Exec("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation)
+func (er *EventRepository) Create(event *models.Event) (string, error) {
+	var id string
+	err := er.store.db.QueryRow("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation).Scan(&id)
 	if err != nil {
 		log.Println("Failed to create event:", err)
-		return err
+		return "", err
 	}
-	return nil
+
+	return id, nil
 }
 
 // Delete implements store.EventRepository.

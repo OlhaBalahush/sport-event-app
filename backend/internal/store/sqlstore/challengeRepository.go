@@ -10,14 +10,16 @@ type ChallengeRepository struct {
 }
 
 // CreateChallenge inserts a new challenge into the database
-func (cr *ChallengeRepository) Create(challenge *models.Challenge) error {
-	_, err := cr.store.db.Exec("INSERT INTO challenges (challenge_name, organization_name, organization_link, img, deadline, aim, award, overview, details_rules) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-		challenge.Name, challenge.OrganizationName, challenge.OrganizationLink, challenge.Img, challenge.Deadline, challenge.Aim, challenge.Award, challenge.Overview, challenge.DetailsRules)
+func (cr *ChallengeRepository) Create(challenge *models.Challenge) (string, error) {
+	var id string
+	err := cr.store.db.QueryRow("INSERT INTO challenges (challenge_name, organization_name, organization_link, img, deadline, aim, award, overview, details_rules) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
+		challenge.Name, challenge.OrganizationName, challenge.OrganizationLink, challenge.Img, challenge.Deadline, challenge.Aim, challenge.Award, challenge.Overview, challenge.DetailsRules).Scan(&id)
 	if err != nil {
 		log.Println("Failed to create challenge:", err)
-		return err
+		return "", err
 	}
-	return nil
+
+	return id, nil
 }
 
 // GetChallengeByID retrieves a challenge from the database by ID

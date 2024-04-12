@@ -3,7 +3,7 @@ package store
 import "sport-event-app/backend/internal/models"
 
 type UserRepository interface {
-	Create(user *models.User) error
+	Create(user *models.User) (string, error)
 	Update(user *models.User) error
 	Read() ([]*models.User, error)
 	Delete(id string) error
@@ -13,7 +13,7 @@ type UserRepository interface {
 }
 
 type EventRepository interface {
-	Create(user *models.Event) error
+	Create(user *models.Event) (string, error)
 	Update(user *models.Event) error
 	Read() ([]*models.Event, error)
 	Delete(id string) error
@@ -25,7 +25,7 @@ type EventRepository interface {
 }
 
 type ChallengeRepository interface {
-	Create(user *models.Challenge) error
+	Create(user *models.Challenge) (string, error)
 	Update(user *models.Challenge) error
 	Read() ([]*models.Challenge, error)
 	Delete(id string) error
@@ -37,7 +37,7 @@ type ChallengeRepository interface {
 }
 
 type CategoryRepository interface {
-	Create(user *models.Category) error
+	Create(user *models.Category) (int, error)
 	Update(user *models.Category) error
 	Read() ([]*models.Category, error)
 	Delete(id int) error

@@ -11,13 +11,14 @@ type CategoryRepository struct {
 
 
 // CreateCategory inserts a new category into the database
-func (cr *CategoryRepository) Create(category *models.Category) error {
-	_, err := cr.store.db.Exec("INSERT INTO categories (name) VALUES ($1)", category.Name)
-	if err != nil {
-		log.Println("Failed to create category:", err)
-		return err
-	}
-	return nil
+func (cr *CategoryRepository) Create(category *models.Category) (int, error) {
+	var id int
+    err := cr.store.db.QueryRow("INSERT INTO categories (name) VALUES ($1) RETURNING id", category.Name).Scan(&id)
+    if err != nil {
+        log.Println("Failed to create category:", err)
+        return 0, err
+    }
+    return id, nil
 }
 
 // GetCategoryByID retrieves a category from the database by ID

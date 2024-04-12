@@ -15,14 +15,16 @@ func (*UserRepository) Check(login string) (*models.User, error) {
 }
 
 // CreateUser inserts a new user into the database
-func (ur *UserRepository) Create(user *models.User) error {
-	_, err := ur.store.db.Exec("INSERT INTO users (fullname, username, email, password, role, img, level) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-		user.Fullname, user.Username, user.Email, user.Password, user.Role, user.Img, user.Level)
-	if err != nil {
-		log.Println("Failed to create user:", err)
-		return err
-	}
-	return nil
+func (ur *UserRepository) Create(user *models.User) (string, error) {
+    var id string
+    err := ur.store.db.QueryRow("INSERT INTO users (fullname, username, email, password, role, img, level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+        user.Fullname, user.Username, user.Email, user.Password, user.Role, user.Img, user.Level).Scan(&id)
+    if err != nil {
+        log.Println("Failed to create user:", err)
+        return "", err
+    }
+
+    return id, nil
 }
 
 // GetUserByID retrieves a user from the database by ID
