@@ -50,10 +50,16 @@ func (s *server) configureRouter() {
 	s.router.GET("/api/v1/users/logout", s.handlerLogOut())
 	s.router.GET("/api/v1/auth/checkCookie", s.handlerCheckCookie())
 
+	//EVENTS
+	s.router.GET("/api/v1/events", s.handlerGetAllEvents())
+
+	//CATEGORIES
+	s.router.GET("/api/v1/categories", s.handlerGetAllCategories())
+
 	s.router.POST("/test", s.test())
 	//<------------AUTH MIDDLEWARE REQUIRED-------------->
 	//USERS
-	s.router.GET("/api/v1/jwt/users/all/:status", s.handlerGetAllUsers())
+	s.router.GET("/api/v1/jwt/users", s.handlerGetAllUsers())
 	s.router.GET("/api/v1/jwt/users/:id", s.handlerGetUser())
 
 	//<------------AUTH + ADMIN MIDDLEWARE REQUIRED-------------->
@@ -77,7 +83,7 @@ func (s *server) test() http.HandlerFunc {
 
 		s.respond(w, r, http.StatusOK, Response{
 			Message: "Successfully retrieved all users!",
-			Data: nil,
+			Data:    nil,
 		})
 	}
 }

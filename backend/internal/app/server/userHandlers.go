@@ -47,6 +47,8 @@ func (s *server) handlerGetAllUsers() http.HandlerFunc {
 	}
 }
 
+// TODO
+
 func (s *server) handlerLogOut() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		deletedCookie := s.deleteCookie()
