@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Logo from "../assets/logo";
+import Logo from "../assets/Logo";
 import { error } from "console";
 
 const Header = () => {
@@ -60,10 +60,10 @@ const Header = () => {
                 <button className="bg-custom-bg text-custom-dark px-2 h-full hover:text-custom-dark-blue">
                     Challenges
                 </button>
-                <button className="bg-custom-bg text-custom-dark border border-custom-dark h-full w-40 rounded hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
+                <button className="bg-custom-bg text-custom-dark border border-custom-dark h-full w-40 rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
                     Log In
                 </button>
-                <button className="bg-custom-dark-blue text-white h-full w-40 rounded hover:bg-custom-light-blue active:bg-blue-900">
+                <button className="bg-custom-dark-blue text-white h-full w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
                     Sign Up
                 </button>
             </div>
