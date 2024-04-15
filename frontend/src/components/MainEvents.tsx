@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Event } from "../models/event";
 import { Category } from "../models/category";
+import Header from "./Reusable/Header";
 
 interface Props {
     PORT: string;
@@ -26,10 +27,10 @@ const MainPage = ({ PORT }: Props) => {
                 console.log('Error taking events:', error);
             })
         }
-        
+
         takeAllEvents();
     }, []);
-    
+
     useEffect(() => {
         const takeAllEvents = async () => {
             await fetch(`${PORT}/api/v1/categories`, {
@@ -46,12 +47,17 @@ const MainPage = ({ PORT }: Props) => {
                 console.log('Error taking events:', error);
             })
         }
-        
+
         takeAllEvents();
     }, []);
-    
+
     return (
-        <></>
+        <>
+            <Header />
+            <div className="mt-14 py-12 mx-12 flex flex-col items-center">
+                Main page
+            </div>
+        </>
     )
 }
 

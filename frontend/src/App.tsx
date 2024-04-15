@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './index.css';
 import { AuthProvider } from './components/context/AuthContext';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MainEvents from './components/MainEvents';
