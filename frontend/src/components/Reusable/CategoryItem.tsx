@@ -10,7 +10,7 @@ const CategoryItem = ({ category }: Props) => {
 
   return (
     <div className='flex flex-col items-center gap-2 text-center'>
-      <div className='flex justify-center items-center h-32 w-32 border border-custom-dark rounded-full hover:bg-custom-bg-2'>
+      <div className='flex justify-center items-center h-20 w-20 md:h-32 md:w-32 border border-custom-dark rounded-full hover:bg-custom-bg-2'>
         {component}
       </div>
       {category}

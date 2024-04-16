@@ -10,4 +10,5 @@ export type Event = {
     Preparation: string;
     Requirements: string;
     Imgs: string[] | null;
+    Attendants: number;
 }

@@ -5,6 +5,7 @@ import Header from "./Reusable/Header";
 import SearchBar from "./Reusable/SearchBar";
 import CategoryItem from "./Reusable/CategoryItem";
 import Footer from "./Reusable/Footer";
+import EventItem from "./Reusable/EventItem";
 
 interface Props {
     PORT: string;
@@ -64,27 +65,30 @@ const MainPage = ({ PORT }: Props) => {
     return (
         <div className="w-full absolute min-h-screen">
             <Header />
-            <div className="mx-12 my-14 py-12 flex flex-col items-center gap-8">
-                <div className="w-full flex gap-5 justify-evenly">
+            <div className="mx-12 xl:mx-40 my-14 py-12 flex flex-col items-center gap-8">
+                <div className="w-full flex-wrap flex gap-5 justify-between xl:justify-evenly">
                     {categories.map((item, index) => (
                         <CategoryItem key={index} category={item.Name}/>
                     ))}
                 </div>
                 <SearchBar onSearch={handleSearch} />
-                <div className="flex gap-5 w-full">
+                {/* TODO make icon for responsive filter */}
+                <div className="hidden md:flex gap-5 w-full">
                     {filterArray.map((item, index) => (
                         <button key={index} className="bg-custom-bg text-custom-dark px-2 h-full hover:text-custom-dark-blue">
                             {item}
                         </button>
                     ))}
                 </div>
-                <div className="w-full wrapper flex flex-wrap justify-between gap-x-5 gap-y-12">
+                <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
                     {events.map((item, index) => (
-                        <div key={index}>{item.Name}</div>
+                        <EventItem key={index} event={item} />
                     ))}
                 </div>
             </div>
-            <Footer />
+            <div className="hidden md:block">
+                    <Footer />
+                </div>
         </div>
     )
 }

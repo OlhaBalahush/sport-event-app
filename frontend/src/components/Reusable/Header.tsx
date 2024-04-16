@@ -41,7 +41,7 @@ const Header = () => {
     }
 
     return (
-        <header className="h-14 py-3 px-12 flex justify-between items-center fixed top-0 w-full border-b border-custom-dark bg-custom-bg">
+        <header className="h-14 py-3 px-12 xl:px-40 flex justify-between items-center fixed top-0 w-full border-b border-custom-dark bg-custom-bg">
             <div className="flex gap-5 items-center">
                 <Logo />
                 <form className="ct-form-cont" onSubmit={handleSubmit}>
