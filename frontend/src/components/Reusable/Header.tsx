@@ -68,18 +68,18 @@ const Header = () => {
                         />
                     </form>
                 </div>
-                <button className="w-auto bg-custom-bg text-custom-dark px-2 md:h-full hover:text-custom-dark-blue">
+                <a href="/" className="flex items-center justify-center w-auto bg-custom-bg text-custom-dark px-2 md:h-full hover:text-custom-dark-blue">
                     Events
-                </button>
-                <button className="bg-custom-bg text-custom-dark px-2 md:h-full hover:text-custom-dark-blue">
+                </a>
+                <a href="/challenges" className="flex items-center justify-center bg-custom-bg text-custom-dark px-2 md:h-full hover:text-custom-dark-blue">
                     Challenges
-                </button>
-                <button className="bg-custom-bg text-custom-dark border border-custom-dark md:h-full w-40 rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
+                </a>
+                <a href="/login" className="flex items-center justify-center bg-custom-bg text-custom-dark border border-custom-dark md:h-full w-40 rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
                     Log In
-                </button>
-                <button className="bg-custom-dark-blue text-white md:h-full w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                </a>
+                <a href="/signup"  className="flex items-center justify-center bg-custom-dark-blue text-white md:h-full w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
                     Sign Up
-                </button>
+                </a>
                 <div className="absolute bottom-0 left-0 w-full md:hidden">
                     <Footer />
                 </div>

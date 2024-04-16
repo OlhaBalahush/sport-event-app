@@ -4,6 +4,10 @@ import './index.css';
 import { AuthProvider } from './components/context/AuthContext';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MainEvents from './components/MainEvents';
+import EventPage from './components/Event';
+import Authentication from './components/Authentication/Authentication';
+import ChallengesPage from './components/Challenges';
+import ChallengePage from './components/Challenge';
 
 const PORT: string = 'http://localhost:7080'
 
@@ -13,9 +17,29 @@ function App() {
       <div>
         <BrowserRouter>
           <Routes>
-            <Route 
-            path='/'
-            element={<MainEvents PORT={PORT} />}
+            <Route
+              path="/login"
+              element={<Authentication isLogin={true} PORT={PORT} />
+              } />
+            <Route
+              path="/signup"
+              element={<Authentication isLogin={false} PORT={PORT} />
+              } />
+            <Route
+              path='/'
+              element={<MainEvents PORT={PORT} />}
+            />
+            <Route
+              path='/challenges'
+              element={<ChallengesPage PORT={PORT} />}
+            />
+            <Route
+              path='/event/:id'
+              element={<EventPage PORT={PORT} />}
+            />
+            <Route
+              path='/challenge/:id'
+              element={<ChallengePage PORT={PORT} />}
             />
             {/* TODO add other routes */}
             <Route path='*' element={<Navigate to={"/"} />} />

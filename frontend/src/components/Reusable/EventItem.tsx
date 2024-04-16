@@ -12,7 +12,7 @@ const EventItem = ({ event }: Props) => {
     const formattedTime = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
     return (
-        <div className='flex flex-col items-center gap-2 text-center'>
+        <a className='flex flex-col items-center gap-2 text-center' href={`/event/${event.ID}`}>
             <div className="min-w-[17rem] max-w-[24rem] max-h-[15rem]">
                 <img
                     className="min-w-full max-h-full object-cover"
@@ -39,7 +39,7 @@ const EventItem = ({ event }: Props) => {
                     Price
                 </div>
             </div>
-        </div>
+        </a>
     );
 };
 
