@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Github from '../assets/Github';
 import Google from '../assets/Google';
 import Logo from '../assets/Logo';
+import { User } from '../../models/user';
 
 interface Props {
     PORT: string;
@@ -13,17 +14,12 @@ interface Props {
 
 const SignUp = ({ PORT, onClose, onChange }: Props) => {
     const [fullName, setFullName] = useState<string>('');
+    const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [repeatedPassword, setRepeatedPassword] = useState<string>('');
     const [error, setError] = useState<{ isError: boolean, text: string }>({ isError: false, text: "" });
-    const { isLoggedIn } = useAuth();
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            onClose();
-        }
-    }, [isLoggedIn])
+    const { login } = useAuth();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -35,10 +31,13 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "appliction/json" },
-            body: JSON.stringify({ /*TODO*/ }),
+            body: JSON.stringify({ fullName, username, email, password }),
         }).then(async response => {
             const res = await response.json();
+            console.log(res)
             if (response.ok) {
+                let curruser: User = res.data as User;
+                login(curruser);
                 onClose();
             } else {
                 setError({
@@ -61,7 +60,7 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
                 <button className='absolute md:right-8 right-5' onClick={onClose}>✕</button>
                 <div className='flex flex-col items-center gap-5'>
                     <Logo />
-                    <h1 className='text-center font-bold'>Sign Up</h1>
+                    <h1 className='text-center font-bold text-h'>Sign Up</h1>
                 </div>
                 <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                     <div className='flex flex-col gap-5'>
@@ -71,8 +70,20 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
                             id="fullname"
                             value={fullName}
                             placeholder="Enter your fullname"
-                            className={`border ${error.isError ? 'border-red' : 'border-custom-dark'} rounded-lg px-4 py-2`}
+                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setFullName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className='flex flex-col gap-5'>
+                        <label htmlFor="username" className="">Username:</label>
+                        <input
+                            type="text"
+                            id="username"
+                            value={username}
+                            placeholder="Enter your username"
+                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
+                            onChange={(e) => setUsername(e.target.value)}
                             required
                         />
                     </div>
@@ -83,7 +94,7 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
                             id="email"
                             value={email}
                             placeholder="Enter your email"
-                            className={`border ${error.isError ? 'border-red' : 'border-custom-dark'} rounded-lg px-4 py-2`}
+                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
@@ -95,7 +106,7 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
                             id="password"
                             value={password}
                             placeholder="Enter your password"
-                            className={`border ${error.isError ? 'border-red' : 'border-custom-dark'} rounded-lg px-4 py-2`}
+                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
@@ -107,12 +118,14 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
                             id="repeatedPassword"
                             value={repeatedPassword}
                             placeholder="Repeat your password"
-                            className={`border ${error.isError ? 'border-red' : 'border-custom-dark'} rounded-lg px-4 py-2`}
+                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setRepeatedPassword(e.target.value)}
                             required
                         />
                     </div>
-
+                    <span className='w-full text-center text-red-500'>
+                        {error.isError ? (error.text) : null}
+                    </span>
                     <button className='flex items-center justify-center bg-custom-dark-blue text-white h-10 rounded-lg hover:bg-custom-light-blue active:bg-blue-900' type="submit">Sign Up</button>
                 </form>
                 <div className='flex flex-row justify-center'>
@@ -120,7 +133,7 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
                     <button onClick={onChange} className='text-custom-dark px-2 md:h-full hover:text-custom-dark-blue'>Log in</button>
                 </div>
                 <div className='h-0 flex justify-center items-center border-b'>
-                    <div className='bg-custom-bg-2 px-4 text-custom-gray'>or</div>
+                    <div className='bg-custom-bg-2 px-4 text-custom-gray text-add'>or</div>
                 </div>
                 {/* TODO add func */}
                 <div className='flex flex-row items-center border border-custom-dark rounded-lg py-2 px-5 hover:bg-custom-bg'>

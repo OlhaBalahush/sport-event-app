@@ -15,13 +15,7 @@ const LogIn = ({ PORT, onClose, onChange }: Props) => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<{ isError: boolean, text: string }>({ isError: false, text: "" });
-    const { login, isLoggedIn } = useAuth();
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            onClose();
-        }
-    }, [isLoggedIn])
+    const { login } = useAuth();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -58,7 +52,7 @@ const LogIn = ({ PORT, onClose, onChange }: Props) => {
                 <button className='absolute md:right-8 right-5' onClick={onClose}>✕</button>
                 <div className='flex flex-col items-center gap-5'>
                     <Logo />
-                    <h1 className='text-center font-bold'>Log In</h1>
+                    <h1 className='text-center font-bold text-h'>Log In</h1>
                 </div>
                 <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                     <div className='flex flex-col gap-5'>
@@ -68,7 +62,7 @@ const LogIn = ({ PORT, onClose, onChange }: Props) => {
                             id="email"
                             value={email}
                             placeholder="Enter your email"
-                            className={`border ${error.isError ? 'border-red' : 'border-custom-dark'} rounded-lg px-4 py-2`}
+                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
@@ -80,12 +74,14 @@ const LogIn = ({ PORT, onClose, onChange }: Props) => {
                             id="password"
                             value={password}
                             placeholder="Enter your password"
-                            className={`border ${error.isError ? 'border-red' : 'border-custom-dark'} rounded-lg px-4 py-2`}
+                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
                     </div>
-
+                    <span className='w-full text-center text-red-500'>
+                        {error.isError ? (error.text) : null}
+                    </span>
                     <button className='flex items-center justify-center bg-custom-dark-blue text-white h-10 rounded-lg hover:bg-custom-light-blue active:bg-blue-900' type="submit">Log In</button>
                 </form>
                 <div className='flex flex-row justify-center'>
@@ -93,7 +89,7 @@ const LogIn = ({ PORT, onClose, onChange }: Props) => {
                     <button onClick={onChange} className='text-custom-dark px-2 md:h-full hover:text-custom-dark-blue'>Sign up</button>
                 </div>
                 <div className='h-0 flex justify-center items-center border-b'>
-                    <div className='bg-custom-bg-2 px-4 text-custom-gray'>or</div>
+                    <div className='bg-custom-bg-2 px-4 text-custom-gray text-add'>or</div>
                 </div>
                 {/* TODO add func */}
                 <div className='flex flex-row items-center border border-custom-dark rounded-lg py-2 px-5 hover:bg-custom-bg'>
