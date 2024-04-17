@@ -30,7 +30,6 @@ const Header = ({ PORT }: Props) => {
                         await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`)
                             .then(async (response) => {
                                 const data = await response.json();
-                                console.log(data)
                                 setLocation(data.address.city || data.address.town || data.address.country || "Kyiv")
                             })
                             .catch((error) => {
@@ -85,7 +84,7 @@ const Header = ({ PORT }: Props) => {
                         />
                     </form>
                 </div>
-                <div className={`${showMenu ? 'block' : 'hidden'} md:flex md:relative absolute left-0 md:top-0 top-14 flex items-end md:flex-row md:h-full flex-col gap-5 md:w-auto w-full h-[calc(100vh-56px)] bg-custom-bg px-12 py-12 md:px-0 md:py-0`}>
+                <div className={`${showMenu ? 'block' : 'hidden'} md:flex md:relative absolute z-20 left-0 md:top-0 top-14 flex items-end md:flex-row md:h-full flex-col gap-5 md:w-auto w-full h-[calc(100vh-56px)] bg-custom-bg px-12 py-12 md:px-0 md:py-0`}>
                     <div className="md:hidden">
                         <form className="ct-form-cont" onSubmit={handleSubmit}>
                             <input
@@ -105,7 +104,7 @@ const Header = ({ PORT }: Props) => {
                         Challenges
                     </a>
                     {isLoggedIn && curruser != null ? (
-                        <div className="flex flex-row gap-5 h-full items-center">
+                        <div className="flex flex-row gap-5 md:h-full items-center">
                             <button className="relative">
                                 <span className="flex items-center justify-center absolute top-0 right-0 rounded-full bg-custom-yellow w-4 h-4 text-add">5</span>
                                 <NotificationsBell />
@@ -122,11 +121,11 @@ const Header = ({ PORT }: Props) => {
                             </a>
                         </div>
                     ) : (
-                        <div className="flex flex-row gap-5 h-full items-center">
-                            <button onClick={(e) => toogleLogInPopup()} className="flex items-center justify-center bg-custom-bg text-custom-dark border border-custom-dark md:h-full w-40 rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
+                        <div className="flex flex-row gap-5 w-full md:md:h-full items-center">
+                            <button onClick={(e) => toogleLogInPopup()} className="flex items-center justify-center bg-custom-bg text-custom-dark border border-custom-dark h-[40px] md:h-full w-full md:w-40 rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
                                 Log In
                             </button>
-                            <button onClick={(e) => toogleSignUpPopup()} className="flex items-center justify-center bg-custom-dark-blue text-white md:h-full w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                            <button onClick={(e) => toogleSignUpPopup()} className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] md:h-full w-full md:w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
                                 Sign Up
                             </button>
                         </div>

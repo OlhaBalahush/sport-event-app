@@ -39,7 +39,7 @@ const MainPage = ({ PORT }: Props) => {
     }, []);
 
     useEffect(() => {
-        const takeAllEvents = async () => {
+        const takeAllCatgories = async () => {
             await fetch(`${PORT}/api/v1/categories`, {
                 method: 'GET',
                 credentials: 'include'
@@ -55,7 +55,7 @@ const MainPage = ({ PORT }: Props) => {
             })
         }
 
-        takeAllEvents();
+        takeAllCatgories();
     }, []);
 
     const handleSearch = (query: string) => {
@@ -68,7 +68,7 @@ const MainPage = ({ PORT }: Props) => {
             <div className="mx-12 xl:mx-40 my-14 py-12 flex flex-col items-center gap-8">
                 <div className="w-full flex-wrap flex gap-5 justify-between xl:justify-evenly">
                     {categories.map((item, index) => (
-                        <CategoryItem key={index} category={item.Name} />
+                        <CategoryItem key={index} category={item.name} />
                     ))}
                 </div>
                 <SearchBar onSearch={handleSearch} />
