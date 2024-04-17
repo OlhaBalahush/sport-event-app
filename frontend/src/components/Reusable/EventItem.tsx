@@ -18,7 +18,7 @@ const EventItem = ({ event }: Props) => {
                     className="min-w-full max-h-full object-cover"
                     src={`${event?.Imgs != null ?
                         `${event?.Imgs[0]}`
-                        : `https://api.dicebear.com/8.x/thumbs/svg?seed=${event?.ID}`}`} />
+                        : `https://api.dicebear.com/8.x/shapes/svg?seed=${event?.ID}`}`} />
             </div>
             <div className="w-full flex flex-row justify-between">
                 <div>

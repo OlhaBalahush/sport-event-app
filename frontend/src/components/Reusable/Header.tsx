@@ -3,12 +3,16 @@ import Logo from "../assets/Logo";
 import Footer from "./Footer";
 import LogIn from "../Authentication/LogIn";
 import SignUp from "../Authentication/SignUp";
+import { useAuth } from "../context/AuthContext";
+import NotificationsBell from "../assets/NotificationsBell";
 
 interface Props {
     PORT: string;
 }
 
 const Header = ({ PORT }: Props) => {
+    const { isLoggedIn, curruser } = useAuth();
+
     const [location, setLocation] = useState("Kyiv");
     const [showMenu, setShowMenu] = useState(false);
 
@@ -100,12 +104,33 @@ const Header = ({ PORT }: Props) => {
                     <a href="/challenges" className="flex items-center justify-center bg-custom-bg text-custom-dark px-2 md:h-full hover:text-custom-dark-blue">
                         Challenges
                     </a>
-                    <button onClick={(e) => toogleLogInPopup()} className="flex items-center justify-center bg-custom-bg text-custom-dark border border-custom-dark md:h-full w-40 rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
-                        Log In
-                    </button>
-                    <button onClick={(e) => toogleSignUpPopup()} className="flex items-center justify-center bg-custom-dark-blue text-white md:h-full w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
-                        Sign Up
-                    </button>
+                    {isLoggedIn && curruser != null ? (
+                        <div className="flex flex-row gap-5 h-full items-center">
+                            <button className="relative">
+                                <span className="flex items-center justify-center absolute top-0 right-0 rounded-full bg-custom-yellow w-4 h-4 text-add">5</span>
+                                <NotificationsBell />
+                            </button>
+                            <a href={`/user/${curruser.id}`} className="flex flex-row items-center gap-2 h-full hover:text-custom-dark-blue">
+                                <div className="h-full w-8 rounded-full overflow-hidden">
+                                    <img
+                                        className="min-w-full max-h-full object-cover"
+                                        src={`${curruser.img != "" ? // TODO should be null instead of ""
+                                            `${curruser.img}`
+                                            : `https://api.dicebear.com/8.x/thumbs/svg?seed=${curruser.id}`}`} />
+                                </div>
+                                {curruser.username}
+                            </a>
+                        </div>
+                    ) : (
+                        <div className="flex flex-row gap-5 h-full items-center">
+                            <button onClick={(e) => toogleLogInPopup()} className="flex items-center justify-center bg-custom-bg text-custom-dark border border-custom-dark md:h-full w-40 rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
+                                Log In
+                            </button>
+                            <button onClick={(e) => toogleSignUpPopup()} className="flex items-center justify-center bg-custom-dark-blue text-white md:h-full w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                                Sign Up
+                            </button>
+                        </div>
+                    )}
                     <div className="absolute bottom-0 left-0 w-full md:hidden">
                         <Footer />
                     </div>
@@ -116,11 +141,11 @@ const Header = ({ PORT }: Props) => {
                     </button>
                 </div>
             </header>
-            {showLogIn ? (
+            {!isLoggedIn && showLogIn ? (
                 <LogIn PORT={PORT} onClose={toogleLogInPopup} onChange={onChange} />
             ) : null}
-            {showSinUp ? (
-                <SignUp PORT={PORT} onClose={toogleSignUpPopup} onChange={onChange}/>
+            {!isLoggedIn && showSinUp ? (
+                <SignUp PORT={PORT} onClose={toogleSignUpPopup} onChange={onChange} />
             ) : null}
         </>
     )

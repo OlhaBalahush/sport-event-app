@@ -5,6 +5,7 @@ import MainEvents from './components/MainEvents';
 import EventPage from './components/Event';
 import ChallengesPage from './components/Challenges';
 import ChallengePage from './components/Challenge';
+import UserPage from './components/User';
 
 const PORT: string = 'http://localhost:7080'
 
@@ -29,6 +30,10 @@ function App() {
             <Route
               path='/challenge/:id'
               element={<ChallengePage PORT={PORT} />}
+            />
+            <Route
+              path='/user/:id'
+              element={<UserPage PORT={PORT} />}
             />
             {/* TODO add other routes */}
             <Route path='*' element={<Navigate to={"/"} />} />
