@@ -4,9 +4,9 @@ import "time"
 
 // Request represents a user request
 type Request struct {
-	ID        int
-	UserID    string
-	Comment   string
-	File      string
-	CreatedAt time.Time
+	ID        int       `db:"id" json:"id"`
+	UserID    string    `db:"user_id" json:"userId"`
+	Comment   string    `db:"comment" json:"comment"`
+	File      string    `db:"file" json:"file"`
+	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 }

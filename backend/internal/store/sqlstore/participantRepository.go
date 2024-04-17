@@ -67,7 +67,7 @@ func (pr *ParticipantRepository) GetEventParticipantsByID(eventID string) ([]*mo
 	var participants []*models.Participant
 	for rows.Next() {
 		participant := &models.Participant{}
-		if err := rows.Scan(&participant.UserID, &participant.UserName, &participant.UserImg); err != nil {
+		if err := rows.Scan(&participant.UserID, &participant.Username, &participant.UserImg); err != nil {
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}
@@ -119,21 +119,21 @@ func (pr *ParticipantRepository) RemoveChallengeParticipant(userID, challengeID 
 
 // UpdateChallengeParticipantPoints updates the points for a participant in a challenge
 func (pr *ParticipantRepository) UpdateChallengeParticipantPoints(userID, challengeID string, points int) error {
-    // Prepare the SQL query
-    query := `
+	// Prepare the SQL query
+	query := `
         UPDATE challenge_participant
         SET points = $3
         WHERE user_id = $1 AND challenge_id = $2
     `
 
-    // Execute the query
-    _, err := pr.store.db.Exec(query, userID, challengeID, points)
-    if err != nil {
-        log.Println("Failed to execute query:", err)
-        return err
-    }
+	// Execute the query
+	_, err := pr.store.db.Exec(query, userID, challengeID, points)
+	if err != nil {
+		log.Println("Failed to execute query:", err)
+		return err
+	}
 
-    return nil
+	return nil
 }
 
 // GetChallengeParticipantsByID retrieves all participants for a challenge by its ID
@@ -158,7 +158,7 @@ func (pr *ParticipantRepository) GetChallengeParticipantsByID(challengeID string
 	var participants []*models.Participant
 	for rows.Next() {
 		participant := &models.Participant{}
-		if err := rows.Scan(&participant.UserID, &participant.UserName, &participant.UserImg, &participant.Points); err != nil {
+		if err := rows.Scan(&participant.UserID, &participant.Username, &participant.UserImg, &participant.Points); err != nil {
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}
