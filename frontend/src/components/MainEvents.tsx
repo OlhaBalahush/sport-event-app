@@ -64,11 +64,11 @@ const MainPage = ({ PORT }: Props) => {
 
     return (
         <div className="w-full absolute min-h-screen">
-            <Header />
+            <Header PORT={PORT} />
             <div className="mx-12 xl:mx-40 my-14 py-12 flex flex-col items-center gap-8">
                 <div className="w-full flex-wrap flex gap-5 justify-between xl:justify-evenly">
                     {categories.map((item, index) => (
-                        <CategoryItem key={index} category={item.Name}/>
+                        <CategoryItem key={index} category={item.Name} />
                     ))}
                 </div>
                 <SearchBar onSearch={handleSearch} />
@@ -87,8 +87,8 @@ const MainPage = ({ PORT }: Props) => {
                 </div>
             </div>
             <div className="hidden md:block">
-                    <Footer />
-                </div>
+                <Footer />
+            </div>
         </div>
     )
 }

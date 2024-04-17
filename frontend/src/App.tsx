@@ -1,11 +1,8 @@
-import React from 'react';
-import logo from './logo.svg';
 import './index.css';
 import { AuthProvider } from './components/context/AuthContext';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MainEvents from './components/MainEvents';
 import EventPage from './components/Event';
-import Authentication from './components/Authentication/Authentication';
 import ChallengesPage from './components/Challenges';
 import ChallengePage from './components/Challenge';
 
@@ -17,14 +14,6 @@ function App() {
       <div>
         <BrowserRouter>
           <Routes>
-            <Route
-              path="/login"
-              element={<Authentication isLogin={true} PORT={PORT} />
-              } />
-            <Route
-              path="/signup"
-              element={<Authentication isLogin={false} PORT={PORT} />
-              } />
             <Route
               path='/'
               element={<MainEvents PORT={PORT} />}

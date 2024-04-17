@@ -1,16 +1,17 @@
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Github from '../assets/Github';
 import Google from '../assets/Google';
+import Logo from '../assets/Logo';
 
 interface Props {
     PORT: string;
+    onClose: () => void;
+    onChange: () => void;
 }
 
-const SignUp = ({ PORT }: Props) => {
-    const navigate = useNavigate();
+const SignUp = ({ PORT, onClose, onChange }: Props) => {
     const [fullName, setFullName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -20,7 +21,7 @@ const SignUp = ({ PORT }: Props) => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/')
+            onClose();
         }
     }, [isLoggedIn])
 
@@ -38,7 +39,7 @@ const SignUp = ({ PORT }: Props) => {
         }).then(async response => {
             const res = await response.json();
             if (response.ok) {
-                navigate('/');
+                onClose();
             } else {
                 setError({
                     isError: true,
@@ -55,9 +56,13 @@ const SignUp = ({ PORT }: Props) => {
     };
 
     return (
-        <div className="md:fixed inset-0 flex items-center justify-center z-50 bg-custom-bg">
-            <div className="flex flex-col gap-5 bg-custom-bg-2 p-8 rounded-2xl min-w-[330px] w-[540px] mt-16 md:mt-0">
-                <h1 className='text-center font-bold'>Sign Up</h1>
+        <div className="fixed inset-0 overflow-y-auto flex items-start lg:items-center justify-center z-50 bg-opacity-50 bg-gray-900">
+            <div className="relative flex flex-col gap-5 bg-custom-bg-2 py-8 px-5 md:p-8 rounded-t-2xl min-w-[330px] w-[540px] mt-20 lg:mt-0 md:rounded-2xl">
+                <button className='absolute md:right-8 right-5' onClick={onClose}>✕</button>
+                <div className='flex flex-col items-center gap-5'>
+                    <Logo />
+                    <h1 className='text-center font-bold'>Sign Up</h1>
+                </div>
                 <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                     <div className='flex flex-col gap-5'>
                         <label htmlFor="fullname" className="">Fullname:</label>
@@ -111,8 +116,8 @@ const SignUp = ({ PORT }: Props) => {
                     <button className='flex items-center justify-center bg-custom-dark-blue text-white h-10 rounded-lg hover:bg-custom-light-blue active:bg-blue-900' type="submit">Sign Up</button>
                 </form>
                 <div className='flex flex-row justify-center'>
-                    <span className="text-custom-gray">Already a user? </span>
-                    <a className='text-custom-dark px-2 md:h-full hover:text-custom-dark-blue' href="/login">Log in</a>
+                    <span className="text-custom-gray">Already a user?</span>
+                    <button onClick={onChange} className='text-custom-dark px-2 md:h-full hover:text-custom-dark-blue'>Log in</button>
                 </div>
                 <div className='h-0 flex justify-center items-center border-b'>
                     <div className='bg-custom-bg-2 px-4 text-custom-gray'>or</div>
