@@ -60,7 +60,7 @@ func (s *server) configureRouter() {
 	//<------------AUTH MIDDLEWARE REQUIRED-------------->
 	//USERS
 	s.router.GET("/api/v1/jwt/users", s.handlerGetAllUsers())
-	s.router.GET("/api/v1/jwt/users/:id", s.handlerGetUser())
+	s.router.GET("/api/v1/users/:id", s.handlerGetUser())
 
 	//<------------AUTH + ADMIN MIDDLEWARE REQUIRED-------------->
 	//USERS

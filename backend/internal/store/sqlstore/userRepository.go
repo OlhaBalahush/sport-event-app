@@ -1,8 +1,13 @@
 package sqlstore
 
 import (
+	"database/sql"
+	"errors"
 	"log"
 	"sport-event-app/backend/internal/models"
+	"strings"
+
+	"github.com/lib/pq"
 )
 
 type UserRepository struct {
@@ -10,21 +15,47 @@ type UserRepository struct {
 }
 
 // Check implements store.UserRepository.
-func (*UserRepository) Check(login string) (*models.User, error) {
-	panic("unimplemented")
+func (ur *UserRepository) Check(login string) (*models.User, error) {
+	// command to find a user no matter if it's email or username
+	query := `SELECT * FROM users u WHERE u.email = $1 OR u.username = $1;`
+	var user models.User
+
+	err := ur.store.db.QueryRow(query, login).Scan(&user.ID, &user.Fullname, &user.Username, &user.Email, &user.Password, &user.Role, &user.Img, &user.Level, &user.CreatedAt)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errors.New("user does not exist with that email or username")
+		}
+		return nil, err // Return other errors directly
+	}
+
+	return &user, nil
 }
 
 // CreateUser inserts a new user into the database
 func (ur *UserRepository) Create(user *models.User) (string, error) {
-    var id string
-    err := ur.store.db.QueryRow("INSERT INTO users (fullname, username, email, password, role, img, level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
-        user.Fullname, user.Username, user.Email, user.Password, user.Role, user.Img, user.Level).Scan(&id)
-    if err != nil {
-        log.Println("Failed to create user:", err)
-        return "", err
-    }
+	var id string
 
-    return id, nil
+	user.BeforeCreate()
+
+	err := ur.store.db.QueryRow("INSERT INTO users (fullname, username, email, password, role, img, level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+		user.Fullname, user.Username, user.Email, user.Password, "user", user.Img, user.Level).Scan(&id)
+
+	user.Sanitize()
+	if pgErr, ok := err.(*pq.Error); ok {
+		if pgErr.Code == "23505" { // unique_violation error code
+			if strings.Contains(pgErr.Message, "users_email_key") {
+				return "", errors.New("email is already taken")
+			} else if strings.Contains(pgErr.Message, "users_username_key") {
+				return "", errors.New("email is already taken")
+			} else {
+				return "", errors.New("unique constraint violation")
+			}
+		} else {
+			return "", pgErr
+		}
+	}
+
+	return id, nil
 }
 
 // GetUserByID retrieves a user from the database by ID

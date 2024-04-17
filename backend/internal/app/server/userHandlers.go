@@ -24,6 +24,27 @@ func (s *server) handlerCreateUser() http.HandlerFunc {
 			return
 		}
 
+		expiration := time.Now().Add(5 * time.Hour)
+		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
+		claims := jwttoken.NewClaims(user.ID, expiration.Unix())
+		token, err := alg.Encode(claims)
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			return
+		}
+
+		cookie := http.Cookie{
+			Name:     sessionName,
+			Value:    token,
+			Expires:  expiration,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteNoneMode,
+		}
+
+		http.SetCookie(w, &cookie)
+
 		s.respond(w, r, http.StatusCreated, Response{
 			Message: "Successfully created user!",
 			Data:    user,

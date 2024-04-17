@@ -8,15 +8,15 @@ import (
 
 // User represents user data
 type User struct {
-	ID        string
-	Fullname  string
-	Username  string
-	Email     string
-	Password  string
-	Role      string
-	Img       string
-	Level     string
-	CreatedAt time.Time
+	ID        string    `db:"id" json:"id"`
+	Fullname  string    `db:"fullname" json:"fullname"`
+	Username  string    `db:"username" json:"username"`
+	Email     string    `db:"email" json:"email"`
+	Password  string    `db:"password" json:"password"`
+	Role      string    `db:"role" json:"role"`
+	Img       string    `db:"img" json:"img"`
+	Level     string    `db:"level" json:"level"`
+	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 }
 
 func (u *User) Sanitize() {
@@ -24,6 +24,8 @@ func (u *User) Sanitize() {
 }
 
 func (u *User) ComparePassword(password string) bool {
+	println([]byte(u.Password))
+	println(password)
 	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)) == nil
 }
 
