@@ -56,6 +56,9 @@ func (s *server) configureRouter() {
 	//CATEGORIES
 	s.router.GET("/api/v1/categories", s.handlerGetAllCategories())
 
+	//CHALLENGES
+	s.router.GET("/api/v1/challenges", s.handlerGetAllChallenges())
+
 	s.router.POST("/test", s.test())
 	//<------------AUTH MIDDLEWARE REQUIRED-------------->
 	//USERS
