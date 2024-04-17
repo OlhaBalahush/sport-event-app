@@ -17,6 +17,12 @@ module.exports = {
       fontFamily: {
         'poppins': ['Poppins', 'sans-serif'],
       },
+      fontSize: {
+        'h': '1.5rem',     // heading
+        'h-2': '1.25rem',    // heading 2
+        'b': '1rem',     // body text
+        'add': '0.75rem',   // additional text\
+      },
     },
   },
   variants: {
