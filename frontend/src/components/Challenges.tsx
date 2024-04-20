@@ -61,6 +61,24 @@ const ChallengesPage = ({ PORT }: Props) => {
         takeAllCatgories();
     }, []);
 
+    const handleCategory = async (category: string) => {
+        // TODO create for challenges
+        await fetch(`${PORT}/api/v1/events/${category}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            console.log(category, res)
+            if (response.ok) {
+                // TODO
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking events:', error);
+        })
+    }
+
     return (
         <div className="w-full absolute min-h-screen">
             <Header PORT={PORT} />
@@ -94,7 +112,7 @@ const ChallengesPage = ({ PORT }: Props) => {
                 ) : null}
                 <div className="w-full flex-wrap flex gap-5 justify-between xl:justify-evenly">
                     {categories.map((item, index) => (
-                        <CategoryItem key={index} category={item.name} />
+                        <CategoryItem key={index} category={item.name} handleCategory={handleCategory} />
                     ))}
                 </div>
                 {challenges.length > 1 ? (

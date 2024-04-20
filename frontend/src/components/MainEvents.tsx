@@ -62,13 +62,29 @@ const MainPage = ({ PORT }: Props) => {
         //  TODO Perform filtering based on the query
     };
 
+    const handleCategory = async (category: string) => {
+        await fetch(`${PORT}/api/v1/events/${category}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setEvents(res.data);
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking events:', error);
+        })
+    }
+
     return (
         <div className="w-full absolute min-h-screen">
             <Header PORT={PORT} />
             <div className="mx-12 xl:mx-40 my-14 py-12 flex flex-col items-center gap-8">
                 <div className="w-full flex-wrap flex gap-5 justify-between xl:justify-evenly">
                     {categories.map((item, index) => (
-                        <CategoryItem key={index} category={item.name} />
+                        <CategoryItem key={index} category={item.name} handleCategory={handleCategory} />
                     ))}
                 </div>
                 <SearchBar onSearch={handleSearch} />
@@ -80,11 +96,15 @@ const MainPage = ({ PORT }: Props) => {
                         </button>
                     ))}
                 </div>
-                <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
-                    {events.map((item, index) => (
-                        <EventItem key={index} event={item} />
-                    ))}
-                </div>
+                {events != null ? (
+                    <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                        {events.map((item, index) => (
+                            <EventItem key={index} event={item} />
+                        ))}
+                    </div>
+                ) : (
+                    <span>No events found</span>
+                )}
             </div>
             <div className="hidden md:block">
                 <Footer />
