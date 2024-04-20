@@ -48,7 +48,7 @@ const LogIn = ({ PORT, onClose, onChange }: Props) => {
 
     return (
         <div className="fixed inset-0 overflow-y-auto flex items-start lg:items-center justify-center z-50 bg-opacity-50 bg-gray-900">
-            <div className="relative flex flex-col gap-5 bg-custom-bg-2 py-8 px-5 md:p-8 rounded-t-2xl min-w-[330px] w-[540px] mt-20 lg:mt-0 md:rounded-2xl">
+            <div className="relative flex flex-col gap-5 bg-custom-white py-8 px-5 md:p-8 rounded-t-2xl min-w-[330px] w-[540px] mt-20 lg:mt-0 md:rounded-2xl">
                 <button className='absolute md:right-8 right-5' onClick={onClose}>✕</button>
                 <div className='flex flex-col items-center gap-5'>
                     <Logo />
@@ -89,7 +89,7 @@ const LogIn = ({ PORT, onClose, onChange }: Props) => {
                     <button onClick={onChange} className='text-custom-dark px-2 md:h-full hover:text-custom-dark-blue'>Sign up</button>
                 </div>
                 <div className='h-0 flex justify-center items-center border-b'>
-                    <div className='bg-custom-bg-2 px-4 text-custom-gray text-add'>or</div>
+                    <div className='bg-custom-white px-4 text-custom-gray text-add'>or</div>
                 </div>
                 {/* TODO add func */}
                 <div className='flex flex-row items-center border border-custom-dark rounded-lg py-2 px-5 hover:bg-custom-bg'>
