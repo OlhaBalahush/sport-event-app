@@ -22,6 +22,26 @@ func (s *server) handlerGetAllEvents() http.HandlerFunc {
 	}
 }
 
+func (s *server) handlerGetEventByID() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+
+		if id == "" {
+			id = r.Context().Value(ctxUserID).(string)
+		}
+		event, err := s.store.Event().FindByID(id)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got event!",
+			Data:    event,
+		})
+	}
+}
+
 func (s *server) handlerGetEventsByCategory() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -37,6 +57,26 @@ func (s *server) handlerGetEventsByCategory() http.HandlerFunc {
 		s.respond(w, r, http.StatusOK, Response{
 			Message: "Successfully got events!",
 			Data:    events,
+		})
+	}
+}
+
+func (s *server) handlerGetEventAttendees() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+
+		if id == "" {
+			id = r.Context().Value(ctxUserID).(string)
+		}
+		attendees, err := s.store.Participant().GetEventParticipantsByID(id)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got event attendees!",
+			Data:    attendees,
 		})
 	}
 }

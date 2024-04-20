@@ -53,6 +53,9 @@ func (s *server) configureRouter() {
 	//EVENTS
 	s.router.GET("/api/v1/events", s.handlerGetAllEvents())
 	s.router.GET("/api/v1/events/:category", s.handlerGetEventsByCategory())
+	s.router.GET("/api/v1/event/:id", s.handlerGetEventByID())
+
+	s.router.GET("/api/v1/events/attendants/:id", s.handlerGetEventAttendees())
 
 	//CATEGORIES
 	s.router.GET("/api/v1/categories", s.handlerGetAllCategories())

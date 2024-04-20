@@ -7,4 +7,5 @@ export type User = {
 	img: string,
 	level: string,
 	createdAt: string
+	points: number
 }
