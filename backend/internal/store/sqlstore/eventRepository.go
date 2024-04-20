@@ -13,8 +13,8 @@ type EventRepository struct {
 func (er *EventRepository) Create(event *models.Event) (string, error) {
 	var id string
 	// Insert event data into the events table
-	err := er.store.db.QueryRow("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
-		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation).Scan(&id)
+	err := er.store.db.QueryRow("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation, event.Price).Scan(&id)
 	if err != nil {
 		log.Println("Failed to create event:", err)
 		return "", err
@@ -35,10 +35,10 @@ func (er *EventRepository) Create(event *models.Event) (string, error) {
 // Delete implements store.EventRepository.
 func (er *EventRepository) Delete(id string) error {
 	// Delete images for the event
-    if err := er.DeleteImagesByEventID(id); err != nil {
-        log.Println("Failed to delete images for event:", err)
-        return err
-    }
+	if err := er.DeleteImagesByEventID(id); err != nil {
+		log.Println("Failed to delete images for event:", err)
+		return err
+	}
 
 	// Delete the event
 	_, err := er.store.db.Exec("DELETE FROM events WHERE id=$1", id)
@@ -51,7 +51,19 @@ func (er *EventRepository) Delete(id string) error {
 
 // GetAllEvents retrieves all events from the database
 func (er *EventRepository) Read() ([]*models.Event, error) {
-	rows, err := er.store.db.Query("SELECT id, event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, created_at FROM events")
+	query := `
+        SELECT 
+            e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.price, e.created_at,
+            COUNT(ep.event_id) AS num_attendees
+        FROM 
+            events e
+        LEFT JOIN 
+            event_participant ep ON e.id = ep.event_id
+        GROUP BY 
+            e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.price, e.created_at
+    `
+
+	rows, err := er.store.db.Query(query)
 	if err != nil {
 		log.Println("Failed to get all events:", err)
 		return nil, err
@@ -61,11 +73,12 @@ func (er *EventRepository) Read() ([]*models.Event, error) {
 	var events []*models.Event
 	for rows.Next() {
 		event := &models.Event{}
-		err := rows.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.CreatedAt)
+		err := rows.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.Price, &event.CreatedAt, &event.Attendees)
 		if err != nil {
 			log.Println("Failed to scan event row:", err)
 			return nil, err
 		}
+
 		// Fetch images for the event
 		images, err := er.GetImagesByEventID(event.ID)
 		if err != nil {
@@ -86,8 +99,8 @@ func (er *EventRepository) Read() ([]*models.Event, error) {
 
 // UpdateEvent updates an existing event in the database
 func (er *EventRepository) Update(event *models.Event) error {
-	_, err := er.store.db.Exec("UPDATE events SET event_name=$1, organizer_id=$2, date_start=$3, date_end=$4, location=$5, description=$6, requirements=$7, preparation=$8 WHERE id=$9",
-		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation, event.ID)
+	_, err := er.store.db.Exec("UPDATE events SET event_name=$1, organizer_id=$2, date_start=$3, date_end=$4, location=$5, description=$6, requirements=$7, preparation=$8, price=$9, WHERE id=$10",
+		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation, event.Price, event.ID)
 	if err != nil {
 		log.Println("Failed to update event:", err)
 		return err
@@ -97,9 +110,9 @@ func (er *EventRepository) Update(event *models.Event) error {
 
 // GetEventByID retrieves an event from the database by ID
 func (er *EventRepository) FindByID(id string) (*models.Event, error) {
-	row := er.store.db.QueryRow("SELECT id, event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, created_at FROM events WHERE id = $1", id)
+	row := er.store.db.QueryRow("SELECT id, event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, price, created_at FROM events WHERE id = $1", id)
 	event := &models.Event{}
-	err := row.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.CreatedAt)
+	err := row.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.Price, &event.CreatedAt)
 	if err != nil {
 		log.Println("Failed to get event by ID:", err)
 		return nil, err
@@ -120,7 +133,7 @@ func (er *EventRepository) FindByID(id string) (*models.Event, error) {
 func (er *EventRepository) GetByCategoryName(categoryName string) ([]*models.Event, error) {
 	// Prepare the SQL query
 	query := `
-        SELECT e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.created_at
+        SELECT e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.price, e.created_at
         FROM events e
         JOIN category_relation cr ON e.id = cr.event_id
         JOIN categories c ON cr.category_id = c.id
@@ -139,7 +152,7 @@ func (er *EventRepository) GetByCategoryName(categoryName string) ([]*models.Eve
 	var events []*models.Event
 	for rows.Next() {
 		event := &models.Event{}
-		if err := rows.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.CreatedAt); err != nil {
+		if err := rows.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.Price, &event.CreatedAt); err != nil {
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}
@@ -165,7 +178,7 @@ func (er *EventRepository) GetByCategoryName(categoryName string) ([]*models.Eve
 func (er *EventRepository) GetSavedEventsForUser(userID string) ([]*models.Event, error) {
 	// Prepare the SQL query
 	query := `
-        SELECT e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.created_at
+        SELECT e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.price, e.created_at
         FROM events e
         JOIN saved_event se ON e.id = se.event_id
         WHERE se.user_id = $1
@@ -183,7 +196,7 @@ func (er *EventRepository) GetSavedEventsForUser(userID string) ([]*models.Event
 	var events []*models.Event
 	for rows.Next() {
 		event := &models.Event{}
-		if err := rows.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.CreatedAt); err != nil {
+		if err := rows.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.Price, &event.CreatedAt); err != nil {
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}
@@ -209,7 +222,7 @@ func (er *EventRepository) GetSavedEventsForUser(userID string) ([]*models.Event
 func (er *EventRepository) GetEventsParticipatedByUser(userID string) ([]*models.Event, error) {
 	// Prepare the SQL query
 	query := `
-        SELECT e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.created_at
+        SELECT e.id, e.event_name, e.organizer_id, e.date_start, e.date_end, e.location, e.description, e.requirements, e.preparation, e.price, e.created_at
         FROM events e
         JOIN event_participant ep ON e.id = ep.event_id
         WHERE ep.user_id = $1
@@ -227,7 +240,7 @@ func (er *EventRepository) GetEventsParticipatedByUser(userID string) ([]*models
 	var events []*models.Event
 	for rows.Next() {
 		event := &models.Event{}
-		if err := rows.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.CreatedAt); err != nil {
+		if err := rows.Scan(&event.ID, &event.Name, &event.OrganizerID, &event.DateStart, &event.DateEnd, &event.Location, &event.Description, &event.Requirements, &event.Preparation, &event.Price, &event.CreatedAt); err != nil {
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}
@@ -275,10 +288,10 @@ func (er *EventRepository) GetImagesByEventID(eventID string) ([]string, error) 
 
 // DeleteImagesByEventID deletes images for an event by its ID
 func (er *EventRepository) DeleteImagesByEventID(eventID string) error {
-    _, err := er.store.db.Exec("DELETE FROM images WHERE event_id = $1", eventID)
-    if err != nil {
-        log.Println("Failed to delete images for event:", err)
-        return err
-    }
-    return nil
+	_, err := er.store.db.Exec("DELETE FROM images WHERE event_id = $1", eventID)
+	if err != nil {
+		log.Println("Failed to delete images for event:", err)
+		return err
+	}
+	return nil
 }

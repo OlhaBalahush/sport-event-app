@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS events (
   description TEXT,
   requirements TEXT,
   preparation TEXT,
+  price DECIMAL(10, 2),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

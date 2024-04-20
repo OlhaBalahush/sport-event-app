@@ -26,7 +26,7 @@ const EventItem = ({ event }: Props) => {
                     {timeForm({ rawDate: event?.dateStart || "" })}
                 </div>
                 <div>
-                    {event?.attendants < 5 || event?.attendants == null ? '5' : event.attendants} attendees
+                    {event.attendees} attendees
                 </div>
             </div>
             <div className="w-full text-left font-bold">
@@ -37,7 +37,11 @@ const EventItem = ({ event }: Props) => {
                     {event?.location}
                 </div>
                 <div>
-                    Price
+                    {event.price.Valid ? (
+                        <span>{event.price.Float64} ¤</span>
+                    ) : (
+                        <span>Free</span>
+                    )}
                 </div>
             </div>
         </a>

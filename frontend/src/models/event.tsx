@@ -9,6 +9,10 @@ export type Event = {
     organizerId: string;
     preparation: string;
     requirements: string;
+    attendees: number;
+    price: {
+        Float64: number,
+        Valid: boolean
+    };
     imgs: string[] | null;
-    attendants: number;
 }
