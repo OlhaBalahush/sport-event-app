@@ -63,14 +63,13 @@ const ChallengesPage = ({ PORT }: Props) => {
 
     const handleCategory = async (category: string) => {
         // TODO create for challenges
-        await fetch(`${PORT}/api/v1/events/${category}`, {
+        await fetch(`${PORT}/api/v1/challenges/${category}`, {
             method: 'GET',
             credentials: 'include'
         }).then(async response => {
             const res = await response.json();
-            console.log(category, res)
             if (response.ok) {
-                // TODO
+                setChallenges(res.data)
             } else {
                 console.error(res.error)
             }
@@ -83,7 +82,7 @@ const ChallengesPage = ({ PORT }: Props) => {
         <div className="w-full absolute min-h-screen">
             <Header PORT={PORT} />
             <div className="mx-12 xl:mx-40 my-14 py-12 flex flex-col items-center gap-8">
-                {challenges.length != 0 ? (
+                {challenges != null && challenges.length > 0 ? (
                     <a className="w-full md:h-[250px] h-[300px] flex justify-start items-end bg-cover bg-no-repeat"
                         style={{ backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0)), url(https://api.dicebear.com/8.x/shapes/svg?seed=${challenges[0].id})` }}>
                         <div className="p-5 w-full text-custom-white">
@@ -115,14 +114,16 @@ const ChallengesPage = ({ PORT }: Props) => {
                         <CategoryItem key={index} category={item.name} handleCategory={handleCategory} />
                     ))}
                 </div>
-                {challenges.length > 1 ? (
+                {challenges === null ? (
+                    <span>No challenges yet</span>
+                ) : challenges.length === 1 ? (
+                    <span>No more challenges</span>
+                ) : (
                     <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
                         {challenges.slice(1).map((item, index) => (
                             <ChallengeItem key={index} challenge={item} />
                         ))}
                     </div>
-                ) : (
-                    <span>No challenges yet</span>
                 )}
             </div>
             <div className="hidden md:block">
