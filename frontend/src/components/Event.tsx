@@ -16,6 +16,7 @@ import ShareIcon from "./assets/Share";
 import SaveIcon from "./assets/Save";
 import RatePopup from "./Reusable/RatePopup";
 import { useAuth } from "./context/AuthContext";
+import AttendantItem from "./Reusable/AttendantItem";
 
 interface Props {
     PORT: string;
@@ -197,8 +198,8 @@ const EventPage = ({ PORT }: Props) => {
     return (
         <div className="w-full absolute min-h-screen">
             <Header PORT={PORT} />
-            <div className="mx-12 xl:mx-40 my-14 mb-0 py-12 flex flex-col items-center gap-8">
-                <h1 className="font-bold text-h">{event?.name}</h1>
+            <div className="min-h-[calc(100vh-56px-72px-48px)] mx-12 xl:mx-40 my-14 mb-0 py-12 flex flex-col items-center gap-8">
+                <h1 className="font-bold text-h text-center">{event?.name}</h1>
                 <div className="w-full flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
                     <a href={`/user/${organizer?.id}`} className="flex flex-row gap-5 items-center hover:text-custom-dark-blue">
                         <div className="h-full w-[50px] rounded-full overflow-hidden">
@@ -258,17 +259,7 @@ const EventPage = ({ PORT }: Props) => {
                             <span>No attendants yet</span>
                         ) : null}
                         {attendants?.map((item, index) => (
-                            <a href={`/user/${item.id}`} key={index} className="flex flex-col gap-3 items-center hover:text-custom-dark-blue">
-                                <div className="h-full w-[80px] rounded-full overflow-hidden">
-                                    <img
-                                        className="min-w-full max-h-full object-cover rounded-full"
-                                        src={`${item.img}`}
-                                        onError={(e: any) => {
-                                            e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${item.id}`;
-                                        }} />
-                                </div>
-                                {item.username}
-                            </a>
+                            <AttendantItem key={index} attendant={item} />
                         ))}
                     </div>
                 </div>
@@ -301,7 +292,7 @@ const EventPage = ({ PORT }: Props) => {
                 </div>
             </div>
             {/* sticky */}
-            <div className="h-full flex flex-row justify-between bg-custom-white px-12 xl:px-40 py-4 md:mb-[48px] sticky bottom-0">
+            <div className="h-full flex flex-row items-center justify-between bg-custom-white px-12 xl:px-40 py-4 md:mb-[48px] sticky bottom-0">
                 <span className="hidden md:block text-custom-dark font-bold text-h-2">
                     {event?.name}
                 </span>
@@ -321,7 +312,7 @@ const EventPage = ({ PORT }: Props) => {
                     <button className="border border-custom-dark rounded-lg p-2 hover:bg-custom-bg">
                         <SaveIcon />
                     </button>
-                    <button className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] md:h-full w-full md:w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                    <button className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] w-full md:w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
                         Buy ticket
                     </button>
                 </div>

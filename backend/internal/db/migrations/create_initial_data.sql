@@ -69,3 +69,12 @@ VALUES
     ('c85f0e1b-f78e-4521-bdbe-12737e751fde', '004af7c0-57cc-4844-b9fb-40aee1961d46', 'The energy in the stadium was electric! The crowd is enthusiasm was contagious, fueling the players to give it their all. That is the magic of sports bringing people together.', null, 5),
     ('cf9e2a4b-86c1-4b83-9a58-0ebc64b3018b', 'f80f0028-ecb7-4f88-ae30-e64e56af14db', 'Heartbreak for one team, jubilation for the other. That is the emotional rollercoaster of sports. But win or lose, the camaraderie and sportsmanship shown by both sides is what truly shines through.', null, 2),
     ('ec701b3d-22ca-4911-937c-4f306afceaae', 'f80f0028-ecb7-4f88-ae30-e64e56af14db', 'An absolute masterclass performance from friend of mine. They made it look effortless out there, but we all know the years of dedication and sacrifice behind every moment of glory. Truly awe-inspiring!', null, 0);
+
+INSERT INTO challenge_participant (user_id, challenge_id, points)
+VALUES
+    ('3428a92e-aac0-4f3f-a55f-9eb5265e0cd7', '0ff0654e-f6a7-40f3-9a7f-97e74d77b91e', 0),
+    ('7482b24c-30ff-4685-899b-d5dce722b982', '0ff0654e-f6a7-40f3-9a7f-97e74d77b91e', 10),
+    ('badfbf3a-bde8-48cb-9908-53afab1575e5', 'ddd04098-0d21-4c0f-9b13-ef5a0f14c62c', 51),
+    ('c85f0e1b-f78e-4521-bdbe-12737e751fde', 'ddd04098-0d21-4c0f-9b13-ef5a0f14c62c', 5),
+    ('cf9e2a4b-86c1-4b83-9a58-0ebc64b3018b', 'ddd04098-0d21-4c0f-9b13-ef5a0f14c62c', 3),
+    ('ec701b3d-22ca-4911-937c-4f306afceaae', 'c8237aec-f471-47ba-8289-f7d96d83cbf4', 20);

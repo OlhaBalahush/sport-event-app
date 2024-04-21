@@ -67,7 +67,11 @@ func (s *server) configureRouter() {
 
 	//CHALLENGES
 	s.router.GET("/api/v1/challenges", s.handlerGetAllChallenges())
+	s.router.GET("/api/v1/challenges/:id", s.handlerGetChallengeByID())
 	s.router.GET("/api/v1/challenges/category/:category", s.handlerGetChallengeByCategory())
+
+	s.router.GET("/api/v1/challenges/attendants/:id", s.handlerGetChallengeAttendees())
+	s.router.GET("/api/v1/challenges/categories/:id", s.handlerGetChallengeCategories())
 
 	s.router.POST("/test", s.test())
 	//<------------AUTH MIDDLEWARE REQUIRED-------------->

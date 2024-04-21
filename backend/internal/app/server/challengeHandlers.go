@@ -61,3 +61,44 @@ func (s *server) handlerGetChallengeByCategory() http.HandlerFunc {
 		})
 	}
 }
+
+func (s *server) handlerGetChallengeAttendees() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+
+		if id == "" {
+			id = r.Context().Value(ctxUserID).(string)
+		}
+
+		attendants, err := s.store.Participant().GetChallengeParticipantsByID(id)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got attendants!",
+			Data:    attendants,
+		})
+	}
+}
+
+func (s *server) handlerGetChallengeCategories() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+
+		if id == "" {
+			id = r.Context().Value(ctxUserID).(string)
+		}
+		categories, err := s.store.Category().GetByFRID(id, "challenge")
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got challenge categories!",
+			Data:    categories,
+		})
+	}
+}
