@@ -102,9 +102,9 @@ const ChallengesPage = ({ PORT }: Props) => {
                                         {timeForm({rawDate: challenges[0].deadline})}
                                     </div>
                                 </div>
-                                <button className="flex items-center justify-center bg-custom-yellow text-custom-dark h-[40px] w-full md:w-40 rounded-lg hover:bg-custom-orange">
+                                <a href={`/challenge/${challenges[0].id}`} className="flex items-center justify-center bg-custom-yellow text-custom-dark h-[40px] w-full md:w-40 rounded-lg hover:bg-custom-orange">
                                     Join
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </a>
