@@ -33,14 +33,14 @@ const FeedbackItem = ({ PORT, feedback }: Props) => {
     }, []);
 
     return (
-        <div className='w-full flex flex-row gap-5 px-[60px] bg-custom-white rounded-lg'>
+        <div className='w-full flex flex-row gap-5 px-4 md:px-[60px] bg-custom-white rounded-lg'>
             {feedback.img.Valid ? (
                 <div>
                     img
                 </div>
             ) : null}
             <div className='flex flex-col gap-3 py-[30px]'>
-                <div className='w-full flex flex-row justify-between'>
+                <div className='w-full flex flex-col md:flex-row gap-3 md:justify-between'>
                     <a href={`/user/${feedback.userId}`} className="flex flex-row items-center gap-2 h-full hover:text-custom-dark-blue">
                         <div className="h-full w-8 rounded-full overflow-hidden">
                             <img
@@ -58,7 +58,7 @@ const FeedbackItem = ({ PORT, feedback }: Props) => {
                         ))}
                     </div>
                 </div>
-                <span className='pl-10'>
+                <span className='md:pl-10'>
                     {feedback.comment}
                 </span>
             </div>
