@@ -60,3 +60,12 @@ VALUES
     ('c85f0e1b-f78e-4521-bdbe-12737e751fde', '004af7c0-57cc-4844-b9fb-40aee1961d46'),
     ('cf9e2a4b-86c1-4b83-9a58-0ebc64b3018b', 'f80f0028-ecb7-4f88-ae30-e64e56af14db'),
     ('ec701b3d-22ca-4911-937c-4f306afceaae', 'f80f0028-ecb7-4f88-ae30-e64e56af14db');
+
+INSERT INTO event_feedback (user_id, event_id, comment, img, rate)
+VALUES
+    ('3428a92e-aac0-4f3f-a55f-9eb5265e0cd7', 'b923b3a0-57db-4dd6-848d-2dfbf70133ec', 'Wow, what a nail-biter! That last-minute goal had me on the edge of my seat the entire match. Talk about sports drama at its finest!', null, 4),
+    ('7482b24c-30ff-4685-899b-d5dce722b982', 'b923b3a0-57db-4dd6-848d-2dfbf70133ec', 'Incredible athleticism on display today! These athletes are pushing the boundaries of what we thought was possible. Hats off to them for their dedication and hard work.', null, 4),
+    ('badfbf3a-bde8-48cb-9908-53afab1575e5', 'b923b3a0-57db-4dd6-848d-2dfbf70133ec', 'I can not believe the underdog pulled off such an upset victory! Sports never fail to surprise and inspire. Anything can happen on game day!', null, 3),
+    ('c85f0e1b-f78e-4521-bdbe-12737e751fde', '004af7c0-57cc-4844-b9fb-40aee1961d46', 'The energy in the stadium was electric! The crowd is enthusiasm was contagious, fueling the players to give it their all. That is the magic of sports bringing people together.', null, 5),
+    ('cf9e2a4b-86c1-4b83-9a58-0ebc64b3018b', 'f80f0028-ecb7-4f88-ae30-e64e56af14db', 'Heartbreak for one team, jubilation for the other. That is the emotional rollercoaster of sports. But win or lose, the camaraderie and sportsmanship shown by both sides is what truly shines through.', null, 2),
+    ('ec701b3d-22ca-4911-937c-4f306afceaae', 'f80f0028-ecb7-4f88-ae30-e64e56af14db', 'An absolute masterclass performance from friend of mine. They made it look effortless out there, but we all know the years of dedication and sacrifice behind every moment of glory. Truly awe-inspiring!', null, 0);

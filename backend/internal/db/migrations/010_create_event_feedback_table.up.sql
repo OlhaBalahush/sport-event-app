@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS event_feedback (
   comment TEXT,
   img TEXT,
   rate INTEGER,
-  created_at TIMESTAMP
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
