@@ -9,16 +9,15 @@ type CategoryRepository struct {
 	store *Store
 }
 
-
 // CreateCategory inserts a new category into the database
 func (cr *CategoryRepository) Create(category *models.Category) (int, error) {
 	var id int
-    err := cr.store.db.QueryRow("INSERT INTO categories (name) VALUES ($1) RETURNING id", category.Name).Scan(&id)
-    if err != nil {
-        log.Println("Failed to create category:", err)
-        return 0, err
-    }
-    return id, nil
+	err := cr.store.db.QueryRow("INSERT INTO categories (name) VALUES ($1) RETURNING id", category.Name).Scan(&id)
+	if err != nil {
+		log.Println("Failed to create category:", err)
+		return 0, err
+	}
+	return id, nil
 }
 
 // GetCategoryByID retrieves a category from the database by ID
@@ -84,7 +83,7 @@ func (cr *CategoryRepository) Delete(id int) error {
 func (cr *CategoryRepository) GetByFRID(id string, flag string) ([]*models.Category, error) {
 	// Prepare the SQL query
 	query := `
-	SELECT c.name
+	SELECT c.id, c.name
 	FROM category_relation cr
 	JOIN categories c ON cr.category_id = c.id
 	WHERE cr.flag = $1 AND
@@ -107,7 +106,7 @@ func (cr *CategoryRepository) GetByFRID(id string, flag string) ([]*models.Categ
 	var categories []*models.Category
 	for rows.Next() {
 		category := &models.Category{}
-		if err := rows.Scan(&category); err != nil {
+		if err := rows.Scan(&category.ID, &category.Name); err != nil {
 			log.Println("Failed to scan row:", err)
 			return nil, err
 		}

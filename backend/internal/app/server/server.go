@@ -52,17 +52,20 @@ func (s *server) configureRouter() {
 
 	//EVENTS
 	s.router.GET("/api/v1/events", s.handlerGetAllEvents())
-	s.router.GET("/api/v1/events/:category", s.handlerGetEventsByCategory())
-	s.router.GET("/api/v1/event/:id", s.handlerGetEventByID())
+	s.router.GET("/api/v1/events/category/:category", s.handlerGetEventsByCategory())
+	s.router.GET("/api/v1/events/:id", s.handlerGetEventByID())
 
 	s.router.GET("/api/v1/events/attendants/:id", s.handlerGetEventAttendees())
+	s.router.GET("/api/v1/events/feedback/:id", s.handlerGetEventFeedback())
+	s.router.GET("/api/v1/events/imgs/:id", s.handlerGetEventImgs())
+	s.router.GET("/api/v1/events/categories/:id", s.handlerGetEventCategories())
 
 	//CATEGORIES
 	s.router.GET("/api/v1/categories", s.handlerGetAllCategories())
 
 	//CHALLENGES
 	s.router.GET("/api/v1/challenges", s.handlerGetAllChallenges())
-	s.router.GET("/api/v1/challenges/:category", s.handlerGetChallengeByCategory())
+	s.router.GET("/api/v1/challenges/category/:category", s.handlerGetChallengeByCategory())
 
 	s.router.POST("/test", s.test())
 	//<------------AUTH MIDDLEWARE REQUIRED-------------->
