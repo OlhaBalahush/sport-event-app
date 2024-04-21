@@ -113,9 +113,10 @@ const Header = ({ PORT }: Props) => {
                                 <div className="h-full w-8 rounded-full overflow-hidden">
                                     <img
                                         className="min-w-full max-h-full object-cover"
-                                        src={`${curruser.img != "" ? // TODO should be null instead of ""
-                                            `${curruser.img}`
-                                            : `https://api.dicebear.com/8.x/thumbs/svg?seed=${curruser.id}`}`} />
+                                        src={`${curruser.img}`}
+                                        onError={(e: any) => {
+                                            e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${curruser.id}`;
+                                        }} />
                                 </div>
                                 {curruser.username}
                             </a>

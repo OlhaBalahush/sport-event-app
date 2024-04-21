@@ -6,17 +6,12 @@ interface Props {
 }
 
 const EventItem = ({ event }: Props) => {
-
-    const date = new Date(event?.dateStart)
-
-    const formattedDate = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    const formattedTime = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-
     return (
         <a className='flex flex-col items-center gap-2 text-center' href={`/event/${event.id}`}>
             <div className="min-w-[17rem] max-w-[24rem] max-h-[15rem]">
                 <img
                     className="min-w-full max-h-full object-cover"
+                    // TODO take event imgs ?
                     src={`${event?.imgs != null ?
                         `${event?.imgs[0]}`
                         : `https://api.dicebear.com/8.x/shapes/svg?seed=${event?.id}`}`} />

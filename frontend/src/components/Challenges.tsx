@@ -63,7 +63,7 @@ const ChallengesPage = ({ PORT }: Props) => {
 
     const handleCategory = async (category: string) => {
         // TODO create for challenges
-        await fetch(`${PORT}/api/v1/challenges/${category}`, {
+        await fetch(`${PORT}/api/v1/challenges/category/${category}`, {
             method: 'GET',
             credentials: 'include'
         }).then(async response => {

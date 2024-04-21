@@ -2,11 +2,16 @@ import { useParams } from "react-router-dom";
 import Header from "./Reusable/Header";
 import Footer from "./Reusable/Footer";
 import { useEffect, useState } from "react";
-import { Event } from "../models/event";
-import { User } from "../models/user";
 import { timeForm } from "../models/timeForm";
 import LocationIcon from "./assets/Location";
 import CalendarIcon from "./assets/CalendarIcon";
+import EventItem from "./Reusable/EventItem";
+import { Event } from "../models/event";
+import { User } from "../models/user";
+import { Category } from "../models/category";
+import { Feedback } from "../models/feedback";
+import InputField from "./Reusable/InputField";
+import FeedbackItem from "./Reusable/FeedbackItem";
 
 interface Props {
     PORT: string;
@@ -16,16 +21,19 @@ const EventPage = ({ PORT }: Props) => {
     const { id } = useParams();
     const [event, setEvent] = useState<Event>();
     const [organizer, setOrganizer] = useState<User>();
-    const [attendants, setAttendants] = useState<User[]>();
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [imgs, setImgs] = useState([]);
+    const [attendants, setAttendants] = useState<User[]>([]);
+    const [events, setEvents] = useState<Event[]>([]);
+    const [feedback, setFeedback] = useState<Feedback[]>([]);
 
     useEffect(() => {
         const takeEvent = async () => {
-            await fetch(`${PORT}/api/v1/event/${id}`, {
+            await fetch(`${PORT}/api/v1/events/${id}`, {
                 method: 'GET',
                 credentials: 'include'
             }).then(async response => {
                 const res = await response.json();
-                console.log(res)
                 if (response.ok) {
                     setEvent(res.data)
                 } else {
@@ -43,11 +51,11 @@ const EventPage = ({ PORT }: Props) => {
         if (event != null) { // ?
             takeOrganizer();
             takeAttendants();
+            takeRecomendations();
+            takeFeedback();
+            takeCategories();
+            takeImgs();
         }
-        // TODO get event's categories
-        // TODO get event's imgs 
-        // TODO get event's recomendations
-        // TODO get event's feedback  
     }, [event]);
 
     const takeOrganizer = async () => {
@@ -56,7 +64,6 @@ const EventPage = ({ PORT }: Props) => {
             credentials: 'include'
         }).then(async response => {
             const res = await response.json();
-            console.log(res)
             if (response.ok) {
                 setOrganizer(res.data)
             } else {
@@ -73,7 +80,6 @@ const EventPage = ({ PORT }: Props) => {
             credentials: 'include'
         }).then(async response => {
             const res = await response.json();
-            console.log(res)
             if (response.ok) {
                 setAttendants(res.data)
             } else {
@@ -84,31 +90,104 @@ const EventPage = ({ PORT }: Props) => {
         })
     }
 
+    // TODO how to make list of recommendations
+    const takeRecomendations = async () => {
+        await fetch(`${PORT}/api/v1/events`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setEvents(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking events:', error);
+        })
+    }
+
+    const takeCategories = async () => {
+        await fetch(`${PORT}/api/v1/events/categories/${event?.id}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setCategories(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking events:', error);
+        })
+    }
+
+    const takeImgs = async () => {
+        await fetch(`${PORT}/api/v1/events/imgs/${event?.id}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setImgs(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking events:', error);
+        })
+    }
+
+    const takeFeedback = async () => {
+        await fetch(`${PORT}/api/v1/events/feedback/${event?.id}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setFeedback(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking event feedback:', error);
+        })
+    }
+
+    const onSubmitFeedback = (newFeedback: string) => {
+        //TODO write fetch
+        console.log('feedback', newFeedback)
+    }
+
     return (
         <div className="w-full absolute min-h-screen">
             <Header PORT={PORT} />
-            <div className="mx-12 xl:mx-40 my-14 py-12 flex flex-col items-center gap-8">
+            <div className="mx-12 xl:mx-40 my-14 mb-0 py-12 flex flex-col items-center gap-8">
                 <h1 className="font-bold text-h">{event?.name}</h1>
                 <div className="w-full flex flex-row justify-between items-center">
-                    <div className="flex flex-row gap-5 items-center">
+                    <a href={`/user/${organizer?.id}`} className="flex flex-row gap-5 items-center hover:text-custom-dark-blue">
                         <div className="h-full w-[50px] rounded-full overflow-hidden">
                             <img
                                 className="min-w-full max-h-full object-cover"
-                                src={`${organizer?.img != "" ?
-                                    `${organizer?.img}`
-                                    : `https://api.dicebear.com/8.x/thumbs/svg?seed=${organizer?.id}`}`} />
+                                src={`${organizer?.img}`}
+                                onError={(e: any) => {
+                                    e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${organizer?.id}`;
+                                }} />
                         </div>
                         {organizer?.fullname}
-                    </div>
-                    <div className="bg-custom-orange px-4 py-1 rounded-lg text-custom-white">
-                        category
+                    </a>
+                    <div className="flex flex-row gap-5">
+                        {categories.map((item, index) => (
+                            <div key={index} className="bg-custom-orange px-4 py-1 rounded-lg text-custom-white">{item.name}</div>
+                        ))}
                     </div>
                 </div>
                 <div className="w-full">
                     <img
                         className="min-w-full max-h-[400px] object-cover"
-                        src={`${event?.imgs != null ?
-                            `${event?.imgs[0]}`
+                        src={`${imgs != null ?
+                            `${imgs[0]}`
                             : `https://api.dicebear.com/8.x/shapes/svg?seed=${event?.id}`}`} />
                 </div>
                 <div className="w-full flex flex-row gap-12">
@@ -141,27 +220,48 @@ const EventPage = ({ PORT }: Props) => {
                         <span>{attendants?.length} attendees</span>
                     </div>
                     <div className="flex flex-row gap-5">
+                        {attendants.length === 0 ? (
+                            <span>No attendants yet</span>
+                        ) : null}
                         {attendants?.map((item, index) => (
-                            <div className="flex flex-col gap-3 items-center">
+                            <a href={`/user/${item.id}`} key={index} className="flex flex-col gap-3 items-center hover:text-custom-dark-blue">
                                 <div className="h-full w-[80px] rounded-full overflow-hidden">
                                     <img
                                         className="min-w-full max-h-full object-cover rounded-full"
-                                        src={`${item.img != '' ?
-                                            `${item.img}`
-                                            : `https://api.dicebear.com/8.x/thumbs/svg?seed=${item.id}`}`} />
+                                        src={`${item.img}`}
+                                        onError={(e: any) => {
+                                            e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${item.id}`;
+                                        }} />
                                 </div>
                                 {item.username}
-                            </div>
+                            </a>
                         ))}
                     </div>
                 </div>
-                <div className="w-full">
+                <div className="w-full flex flex-col gap-5">
                     <h2 className="font-bold text-h-2">Recommendations for you</h2>
-                    <div></div>
+                    {events.length != 0 ? (
+                        <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                            {events.map((item, index) => (
+                                <EventItem key={index} event={item} />
+                            ))}
+                        </div>
+                    ) : (
+                        <span>No events found</span>
+                    )}
                 </div>
-                <div className="w-full">
+                <div className="w-full flex flex-col gap-5">
                     <h2 className="font-bold text-h-2">Feedback</h2>
-                    <div></div>
+                    {feedback.length != 0 ? (
+                        <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                            {feedback.map((item, index) => (
+                                <FeedbackItem key={index} PORT={PORT} feedback={item} />
+                            ))}
+                        </div>
+                    ) : (
+                        <span>No feedback found</span>
+                    )}
+                    <InputField onSubmit={(newFeedback) => onSubmitFeedback(newFeedback)} />
                 </div>
             </div>
             {/* sticky */}

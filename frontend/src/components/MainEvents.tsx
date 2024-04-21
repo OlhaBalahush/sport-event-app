@@ -64,7 +64,7 @@ const MainPage = ({ PORT }: Props) => {
     };
 
     const handleCategory = async (category: string) => {
-        await fetch(`${PORT}/api/v1/events/${category}`, {
+        await fetch(`${PORT}/api/v1/events/category/${category}`, {
             method: 'GET',
             credentials: 'include'
         }).then(async response => {
