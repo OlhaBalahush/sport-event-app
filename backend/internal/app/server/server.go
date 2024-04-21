@@ -60,6 +60,8 @@ func (s *server) configureRouter() {
 	s.router.GET("/api/v1/events/imgs/:id", s.handlerGetEventImgs())
 	s.router.GET("/api/v1/events/categories/:id", s.handlerGetEventCategories())
 
+	s.router.POST("/api/v1/feedback/create", s.handlerCreateFeedback())
+
 	//CATEGORIES
 	s.router.GET("/api/v1/categories", s.handlerGetAllCategories())
 

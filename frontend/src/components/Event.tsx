@@ -10,16 +10,19 @@ import { Event } from "../models/event";
 import { User } from "../models/user";
 import { Category } from "../models/category";
 import { Feedback } from "../models/feedback";
-import InputField from "./Reusable/InputField";
+import InputField from "./Reusable/FeedbackInputField";
 import FeedbackItem from "./Reusable/FeedbackItem";
 import ShareIcon from "./assets/Share";
 import SaveIcon from "./assets/Save";
+import RatePopup from "./Reusable/RatePopup";
+import { useAuth } from "./context/AuthContext";
 
 interface Props {
     PORT: string;
 }
 
 const EventPage = ({ PORT }: Props) => {
+    const { isLoggedIn, curruser } = useAuth();
     const { id } = useParams();
     const [event, setEvent] = useState<Event>();
     const [organizer, setOrganizer] = useState<User>();
@@ -157,9 +160,38 @@ const EventPage = ({ PORT }: Props) => {
         })
     }
 
-    const onSubmitFeedback = (newFeedback: string) => {
-        //TODO write fetch
-        console.log('feedback', newFeedback)
+    const onSubmitFeedback = async (newFeedback: string, rate: number) => {
+        const newFeed: Feedback = {
+            id: -1,
+            eventId: event == undefined ? '' : event.id,
+            userId: curruser == undefined ? '' : curruser.id,
+            comment: newFeedback,
+            img: { String: '', Valid: false },
+            rate: rate,
+            createdAt: ''
+        }
+        // console.log(`newFeedback: ${newFeed}`);
+        await fetch(`${PORT}/api/v1/feedback/create`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                eventId: event == undefined ? '' : event.id,
+                userId: curruser == undefined ? '' : curruser.id,
+                comment: newFeedback,
+                img: { String: '', Valid: false },
+                rate: rate,
+            }),
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setFeedback(prev => [...prev, newFeed])
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error posting feedback:', error);
+        })
     }
 
     return (
@@ -195,7 +227,7 @@ const EventPage = ({ PORT }: Props) => {
                 <div className="w-full flex flex-col gap-4 md:flex-row md:gap-12">
                     <div className="flex felx-row gap-3 items-center">
                         <LocationIcon />
-                        {event?.location}
+                        {event?.location}onSubmitFeedback
                     </div>
                     <div className="flex felx-row gap-3 items-center">
                         <CalendarIcon color={"#131315"} />
@@ -263,7 +295,9 @@ const EventPage = ({ PORT }: Props) => {
                     ) : (
                         <span>No feedback found</span>
                     )}
-                    <InputField onSubmit={(newFeedback) => onSubmitFeedback(newFeedback)} />
+                    {isLoggedIn && curruser != null ? (
+                        <InputField onSubmit={(newFeedback, rate) => onSubmitFeedback(newFeedback, rate)} />
+                    ) : null}
                 </div>
             </div>
             {/* sticky */}

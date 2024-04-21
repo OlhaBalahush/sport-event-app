@@ -39,7 +39,7 @@ const FeedbackItem = ({ PORT, feedback }: Props) => {
                     img
                 </div>
             ) : null}
-            <div className='flex flex-col gap-3 py-[30px]'>
+            <div className='w-full flex flex-col gap-3 py-[30px]'>
                 <div className='w-full flex flex-col md:flex-row gap-3 md:justify-between'>
                     <a href={`/user/${feedback.userId}`} className="flex flex-row items-center gap-2 h-full hover:text-custom-dark-blue">
                         <div className="h-full w-8 rounded-full overflow-hidden">
@@ -54,7 +54,7 @@ const FeedbackItem = ({ PORT, feedback }: Props) => {
                     </a>
                     <div className='h-full flex flex-row gap-1 items-center'>
                         {Array.from({length: 5}, (_, index) => (
-                            <RateStar key={index} isFilled={index + 1 > feedback.rate ? false : true}/>
+                            <RateStar key={index} isFilled={index + 1 > feedback.rate ? false : true} size={0}/>
                         ))}
                     </div>
                 </div>
