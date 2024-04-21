@@ -188,3 +188,91 @@ func (s *server) handlerGetUser() http.HandlerFunc {
 		})
 	}
 }
+
+func (s *server) handlerGetUserCategories() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+
+		if id == "" {
+			id = r.Context().Value(ctxUserID).(string)
+		}
+		categories, err := s.store.Category().GetByFRID(id, "user")
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got user categories!",
+			Data:    categories,
+		})
+	}
+}
+
+func (s *server) handlerGetUserChallenges() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		typ := router.Param(r.Context(), "type")
+
+		if id == "" {
+			id = r.Context().Value(ctxUserID).(string)
+		}
+
+		var challenges []*models.Challenge
+		var err error
+
+		switch typ {
+		case "attended":
+			challenges, err = s.store.Challenge().GetChallengesParticipatedByUser(id)
+		case "saved":
+			challenges, err = s.store.Challenge().GetSavedChallengesForUser(id)
+		default:
+			s.error(w, r, http.StatusBadRequest, errors.New("invalid event type"))
+			return
+		}
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got user challenges!",
+			Data:    challenges,
+		})
+	}
+}
+
+func (s *server) handlerGetUserEvents() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		typ := router.Param(r.Context(), "type")
+
+		if id == "" {
+			id = r.Context().Value(ctxUserID).(string)
+		}
+
+		var events []*models.Event
+		var err error
+
+		switch typ {
+		case "attended":
+			events, err = s.store.Event().GetEventsParticipatedByUser(id)
+		case "saved":
+			events, err = s.store.Event().GetSavedEventsForUser(id)
+		default:
+			s.error(w, r, http.StatusBadRequest, errors.New("invalid event type"))
+			return
+		}
+
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got user events!",
+			Data:    events,
+		})
+	}
+}

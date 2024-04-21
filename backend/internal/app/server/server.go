@@ -78,6 +78,9 @@ func (s *server) configureRouter() {
 	//USERS
 	s.router.GET("/api/v1/jwt/users", s.handlerGetAllUsers())
 	s.router.GET("/api/v1/users/:id", s.handlerGetUser())
+	s.router.GET("/api/v1/users/categories/:id", s.handlerGetUserCategories())
+	s.router.GET("/api/v1/users/:id/challenges/:type", s.handlerGetUserChallenges())
+	s.router.GET("/api/v1/users/:id/events/:type", s.handlerGetUserEvents())
 
 	//<------------AUTH + ADMIN MIDDLEWARE REQUIRED-------------->
 	//USERS
