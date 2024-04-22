@@ -12,16 +12,20 @@ import { User } from "../models/user";
 import ShareIcon from "./assets/Share";
 import SaveIcon from "./assets/Save";
 import { Category } from "../models/category";
+import { useAuth } from "./context/AuthContext";
 
 interface Props {
     PORT: string;
 }
 
 const ChallengePage = ({ PORT }: Props) => {
+    const { isLoggedIn, curruser } = useAuth();
     const { id } = useParams();
     const [challenge, setChallenge] = useState<Challenge>();
     const [categories, setCategories] = useState<Category[]>([]);
     const [attendants, setAttendants] = useState<User[]>([]);
+    const [isJoined, setIsJoined] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
 
     useEffect(() => {
         const takeEvent = async () => {
@@ -50,6 +54,13 @@ const ChallengePage = ({ PORT }: Props) => {
             takeCategories();
         }
     }, [challenge]);
+
+    useEffect(() => {
+        if (challenge != null && curruser != null) { // ?
+            checkJoining();
+            checkSaving();
+        }
+    }, [curruser, challenge]);
 
     const takeAttendants = async () => {
         await fetch(`${PORT}/api/v1/challenges/attendants/${challenge?.id}`, {
@@ -82,6 +93,84 @@ const ChallengePage = ({ PORT }: Props) => {
         }).catch(error => {
             console.log('Error taking events:', error);
         })
+    }
+
+    const checkJoining = async () => {
+        await fetch(`${PORT}/api/v1/jwt/challenges/joined/${challenge?.id}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            console.log(res)
+            if (response.ok) {
+                setIsJoined(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking event feedback:', error);
+        })
+    }
+
+    const checkSaving = async () => {
+        await fetch(`${PORT}/api/v1/jwt/challenges/saved/${challenge?.id}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            console.log(res)
+            if (response.ok) {
+                setIsSaved(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking event feedback:', error);
+        })
+    }
+
+    const handleJoining = async () => {
+        // TODO handle popups
+        // TODO check if user already saved the event
+        if (isLoggedIn && curruser != null) {
+            await fetch(`${PORT}/api/v1/jwt/challenges/join/${challenge?.id}`, {
+                method: 'GET',
+                credentials: 'include'
+            }).then(async response => {
+                const res = await response.json();
+                if (response.ok) {
+                    setIsJoined(prev => !prev)
+                } else {
+                    console.error(res.error)
+                }
+            }).catch(error => {
+                console.log('Error taking event feedback:', error);
+            })
+        } else {
+            console.log('login first')
+            // TODO toogle popup
+        }
+    }
+
+    const handleSaving = async () => {
+        if (isLoggedIn && curruser != null) {
+            await fetch(`${PORT}/api/v1/jwt/challenges/save/${challenge?.id}`, {
+                method: 'GET',
+                credentials: 'include'
+            }).then(async response => {
+                const res = await response.json();
+                if (response.ok) {
+                    setIsSaved(prev => !prev)
+                } else {
+                    console.error(res.error)
+                }
+            }).catch(error => {
+                console.log('Error saving event:', error);
+            })
+        } else {
+            console.log('login first')
+            // TODO toogle popup
+        }
     }
 
     return (
@@ -128,12 +217,12 @@ const ChallengePage = ({ PORT }: Props) => {
                                 <CalendarIcon color="#65656B" />
                             </div>
                             {timeForm({ rawDate: challenge?.deadline || "" })}
-                        </div>
+                            Join           </div>
                         <div className="flex flex-row gap-4 items-center">
                             <div className="w-[35px] flex justify-center">
                                 <AwardIcon color="#65656B" />
                             </div>
-                            {challenge?.award}
+                            Join               {challenge?.award}
                         </div>
                     </div>
                     <div className="md:col-span-2 flex flex-col gap-5">
@@ -171,11 +260,19 @@ const ChallengePage = ({ PORT }: Props) => {
                     <button className="border border-custom-dark rounded-lg p-2 hover:bg-custom-bg">
                         <ShareIcon />
                     </button>
-                    <button className="border border-custom-dark rounded-lg p-2 hover:bg-custom-bg">
-                        <SaveIcon />
+                    <button
+                        onClick={handleSaving}
+                        className="border border-custom-dark rounded-lg p-2 hover:bg-custom-bg">
+                        <SaveIcon color={`${isSaved ? '#015BBB' : 'none'}`} />
                     </button>
-                    <button className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] w-full md:w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
-                        Join
+                    <button
+                        onClick={handleJoining}
+                        className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] w-full md:w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                        {isJoined ? (
+                            <span>Joined</span>
+                        ) : (
+                            <span>Join</span>
+                        )}
                     </button>
                 </div>
             </div>
