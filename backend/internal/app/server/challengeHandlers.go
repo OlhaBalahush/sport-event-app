@@ -102,3 +102,73 @@ func (s *server) handlerGetChallengeCategories() http.HandlerFunc {
 		})
 	}
 }
+
+func (s *server) handleGetChallengeJoiningStatus() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		userId := r.Context().Value(ctxUserID).(string)
+
+		res, err := s.store.Participant().IsChallengeParticipant(id, userId)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got joining status!",
+			Data:    res,
+		})
+	}
+}
+
+func (s *server) handleGetChallengeSavingStatus() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		userId := r.Context().Value(ctxUserID).(string)
+
+		res, err := s.store.Challenge().IsSaved(id, userId)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got saving status!",
+			Data:    res,
+		})
+	}
+}
+
+func (s *server) handleJoinChallenge() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		userId := r.Context().Value(ctxUserID).(string)
+
+		err := s.store.Participant().AddChallengeParticipant(userId, id, 0)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully joined challenge!",
+		})
+	}
+}
+
+func (s *server) handleSaveChallenge() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		userId := r.Context().Value(ctxUserID).(string)
+
+		err := s.store.Challenge().Save(id, userId)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully save challenge!",
+		})
+	}
+}

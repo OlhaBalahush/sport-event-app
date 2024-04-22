@@ -25,6 +25,9 @@ type EventRepository interface {
 
 	GetImagesByEventID(eventID string) ([]string, error)
 	DeleteImagesByEventID(eventID string) error
+
+	Save(eventID string, userID string) error
+	IsSaved(eventID string, userID string) (bool, error)
 }
 
 type ChallengeRepository interface {
@@ -37,6 +40,9 @@ type ChallengeRepository interface {
 	GetByCategoryName(categoryName string) ([]*models.Challenge, error)
 	GetSavedChallengesForUser(userID string) ([]*models.Challenge, error)
 	GetChallengesParticipatedByUser(userID string) ([]*models.Challenge, error)
+
+	Save(challengeID string, userID string) error
+	IsSaved(challengeID string, userID string) (bool, error)
 }
 
 type CategoryRepository interface {
@@ -60,11 +66,13 @@ type ParticipantRepository interface {
 	AddEventParticipant(userID, eventID string) error
 	RemoveEventParticipant(userID, eventID string) error
 	GetEventParticipantsByID(eventID string) ([]*models.Participant, error)
+	IsEventParticipant(eventID string, userID string) (bool, error)
 
 	AddChallengeParticipant(userID, challengeID string, points int) error
 	RemoveChallengeParticipant(userID, challengeID string) error
 	UpdateChallengeParticipantPoints(userID, challengeID string, points int) error
 	GetChallengeParticipantsByID(challengeID string) ([]*models.Participant, error)
+	IsChallengeParticipant(challengeID string, userID string) (bool, error)
 }
 
 type RequestRepository interface {

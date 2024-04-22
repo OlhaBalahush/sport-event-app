@@ -32,6 +32,8 @@ const EventPage = ({ PORT }: Props) => {
     const [attendants, setAttendants] = useState<User[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
     const [feedback, setFeedback] = useState<Feedback[]>([]);
+    const [isJoined, setIsJoined] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
 
     useEffect(() => {
         const takeEvent = async () => {
@@ -63,6 +65,13 @@ const EventPage = ({ PORT }: Props) => {
             takeImgs();
         }
     }, [event]);
+
+    useEffect(() => {
+        if (event != null && curruser != null) { // ?
+            checkJoining();
+            checkSaving();
+        }
+    }, [curruser, event]);
 
     const takeOrganizer = async () => {
         await fetch(`${PORT}/api/v1/users/${event?.organizerId}`, {
@@ -161,6 +170,87 @@ const EventPage = ({ PORT }: Props) => {
         })
     }
 
+    const checkJoining = async () => {
+        await fetch(`${PORT}/api/v1/jwt/events/joined/${event?.id}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setIsJoined(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking event feedback:', error);
+        })
+    }
+
+    const checkSaving = async () => {
+        await fetch(`${PORT}/api/v1/jwt/events/saved/${event?.id}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setIsSaved(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking event feedback:', error);
+        })
+    }
+
+    const handleJoining = async () => {
+        // TODO handle popups
+        // TODO check if user already saved the event
+        if (isLoggedIn && curruser != null) {
+            await fetch(`${PORT}/api/v1/jwt/events/join/${event?.id}`, {
+                method: 'GET',
+                credentials: 'include'
+            }).then(async response => {
+                const res = await response.json();
+                if (response.ok) {
+                    setIsJoined(prev => !prev)
+                } else {
+                    console.error(res.error)
+                }
+            }).catch(error => {
+                console.log('Error taking event feedback:', error);
+            })
+        } else {
+            console.log('login first')
+            // TODO toogle popup
+        }
+    }
+
+    const handleSaving = async () => {
+        if (isLoggedIn && curruser != null) {
+            await fetch(`${PORT}/api/v1/jwt/events/save/${event?.id}`, {
+                method: 'GET',
+                credentials: 'include'
+            }).then(async response => {
+                const res = await response.json();
+                if (response.ok) {
+                    setIsSaved(prev => !prev)
+                } else {
+                    console.error(res.error)
+                }
+            }).catch(error => {
+                console.log('Error saving event:', error);
+            })
+        } else {
+            console.log('login first')
+            // TODO toogle popup
+        }
+    }
+
+    // TODO handle sharing
+    const handleSharing = () => {
+        console.log('share')
+    }
+
     const onSubmitFeedback = async (newFeedback: string, rate: number) => {
         const newFeed: Feedback = {
             id: -1,
@@ -209,7 +299,7 @@ const EventPage = ({ PORT }: Props) => {
                                 onError={(e: any) => {
                                     e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${organizer?.id}`;
                                 }} />
-                        </div>
+                        </div>isSaved
                         {organizer?.fullname}
                     </a>
                     <div className="flex flex-row gap-5">
@@ -306,14 +396,25 @@ const EventPage = ({ PORT }: Props) => {
                             Free
                         </span>
                     )}
-                    <button className="border border-custom-dark rounded-lg p-2 hover:bg-custom-bg">
+                    <button
+                        onClick={handleSharing}
+                        className="border border-custom-dark rounded-lg p-2 hover:bg-custom-bg">
                         <ShareIcon />
                     </button>
-                    <button className="border border-custom-dark rounded-lg p-2 hover:bg-custom-bg">
-                        <SaveIcon />
+                    <button
+                        onClick={handleSaving}
+                        className={`border border-custom-dark rounded-lg p-2 hover:bg-custom-bg`}>
+                        <SaveIcon color={`${isSaved ? '#015BBB' : 'none'}`} />
                     </button>
-                    <button className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] w-full md:w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
-                        Buy ticket
+                    <button
+                        onClick={handleJoining}
+                        disabled={isJoined}
+                        className={`flex items-center justify-center bg-custom-dark-blue text-white h-[40px] w-full md:w-40 rounded-lg ${isJoined ? 'bg-custom-light-blue' : 'hover:bg-custom-light-blue active:bg-blue-900'}`}>
+                        {isJoined ? (
+                            <span>You have ticket(s)</span>
+                        ) : (
+                            <span>Buy ticket</span>
+                        )}
                     </button>
                 </div>
             </div>

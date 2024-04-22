@@ -190,3 +190,65 @@ func (cr *ChallengeRepository) GetChallengesParticipatedByUser(userID string) ([
 
 	return challenges, nil
 }
+
+func (cr *ChallengeRepository) Save(eventID string, userID string) error {
+	// Check if the event is already saved
+	exists, err := cr.IsSaved(eventID, userID)
+	if err != nil {
+		log.Println("Failed to check if event is saved:", err)
+		return err
+	}
+
+	// If the event is already saved, remove it before inserting
+	if exists {
+		err := cr.RemoveSavedChallenge(eventID, userID)
+		if err != nil {
+			log.Println("Failed to remove existing saved event:", err)
+			return err
+		}
+		return nil
+	}
+
+	// Prepare the SQL query for insertion
+	query := `
+		INSERT INTO saved_challenges (user_id, challenge_id)
+		VALUES ($1, $2)
+    `
+
+	// Execute the query to save the event
+	_, err = cr.store.db.Exec(query, userID, eventID)
+	if err != nil {
+		log.Println("Failed to execute query:", err)
+		return err
+	}
+
+	return nil
+}
+
+func (cr *ChallengeRepository) IsSaved(challengeID string, userID string) (bool, error) {
+	// Query the saved_challenge table to check if the user is a participant of the event
+	query := `SELECT EXISTS(SELECT 1 FROM saved_challenges WHERE user_id = $1 AND challenge_id = $2)`
+	var exists bool
+	err := cr.store.db.QueryRow(query, userID, challengeID).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+}
+
+func (cr *ChallengeRepository) RemoveSavedChallenge(challengeID string, userID string) error {
+	// Prepare the SQL query for deletion
+	query := `
+        DELETE FROM saved_challenges
+        WHERE user_id = $1 AND challenge_id = $2
+    `
+
+	// Execute the query to remove the saved event
+	_, err := cr.store.db.Exec(query, userID, challengeID)
+	if err != nil {
+		log.Println("Failed to execute query:", err)
+		return err
+	}
+
+	return nil
+}

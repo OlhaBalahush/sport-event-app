@@ -40,7 +40,8 @@ func newServer(store store.Store, srv *http.Server, r *router.Router) *server {
 }
 
 func (s *server) configureRouter() {
-	//middlewares soon
+	//Middleware usage
+	s.router.Use(s.setRequestID, s.logRequest)
 	s.router.UseWithPrefix("/jwt", s.jwtMiddleware)
 	s.router.UseWithPrefix("/organizer", s.organizerMiddleware)
 	s.router.UseWithPrefix("/admin", s.adminMiddleware)
@@ -59,6 +60,10 @@ func (s *server) configureRouter() {
 	s.router.GET("/api/v1/events/feedback/:id", s.handlerGetEventFeedback())
 	s.router.GET("/api/v1/events/imgs/:id", s.handlerGetEventImgs())
 	s.router.GET("/api/v1/events/categories/:id", s.handlerGetEventCategories())
+	s.router.GET("/api/v1/jwt/events/joined/:id", s.handleGetEventJoiningStatus())
+	s.router.GET("/api/v1/jwt/events/saved/:id", s.handleGetEventSavingStatus())
+	s.router.GET("/api/v1/jwt/events/join/:id", s.handleJoinEvent())
+	s.router.GET("/api/v1/jwt/events/save/:id", s.handleSaveEvent())
 
 	s.router.POST("/api/v1/feedback/create", s.handlerCreateFeedback())
 
@@ -72,6 +77,10 @@ func (s *server) configureRouter() {
 
 	s.router.GET("/api/v1/challenges/attendants/:id", s.handlerGetChallengeAttendees())
 	s.router.GET("/api/v1/challenges/categories/:id", s.handlerGetChallengeCategories())
+	s.router.GET("/api/v1/jwt/challenges/joined/:id", s.handleGetChallengeJoiningStatus())
+	s.router.GET("/api/v1/jwt/challenges/saved/:id", s.handleGetChallengeSavingStatus())
+	s.router.GET("/api/v1/jwt/challenges/join/:id", s.handleJoinChallenge())
+	s.router.GET("/api/v1/jwt/challenges/save/:id", s.handleSaveChallenge())
 
 	s.router.POST("/test", s.test())
 	//<------------AUTH MIDDLEWARE REQUIRED-------------->

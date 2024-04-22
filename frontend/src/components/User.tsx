@@ -205,7 +205,7 @@ const UserPage = ({ PORT }: Props) => {
                         { challenges == null || challenges.length === 0 ? (
                             <span>User has challenges yet</span>
                         ) : (
-                            <div>
+                            <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
                                 {challenges.map((item, index) => (
                                     <ChallengeItem key={index} challenge={item} />
                                 ))}

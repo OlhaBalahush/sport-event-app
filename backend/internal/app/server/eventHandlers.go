@@ -140,3 +140,73 @@ func (s *server) handlerGetEventImgs() http.HandlerFunc {
 		})
 	}
 }
+
+func (s *server) handleGetEventJoiningStatus() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		userId := r.Context().Value(ctxUserID).(string)
+
+		res, err := s.store.Participant().IsEventParticipant(id, userId)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got joining status!",
+			Data:    res,
+		})
+	}
+}
+
+func (s *server) handleJoinEvent() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		userId := r.Context().Value(ctxUserID).(string)
+
+		err := s.store.Participant().AddEventParticipant(userId, id)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully joined event!",
+		})
+	}
+}
+
+func (s *server) handleGetEventSavingStatus() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		userId := r.Context().Value(ctxUserID).(string)
+
+		res, err := s.store.Event().IsSaved(id, userId)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully got saving status!",
+			Data:    res,
+		})
+	}
+}
+
+func (s *server) handleSaveEvent() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := router.Param(r.Context(), "id")
+		userId := r.Context().Value(ctxUserID).(string)
+
+		err := s.store.Event().Save(id, userId)
+		if err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully saved event!",
+		})
+	}
+}

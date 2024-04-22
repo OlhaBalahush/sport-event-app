@@ -295,3 +295,65 @@ func (er *EventRepository) DeleteImagesByEventID(eventID string) error {
 	}
 	return nil
 }
+
+func (er *EventRepository) Save(eventID string, userID string) error {
+	// Check if the event is already saved
+	exists, err := er.IsSaved(eventID, userID)
+	if err != nil {
+		log.Println("Failed to check if event is saved:", err)
+		return err
+	}
+
+	// If the event is already saved, remove it before inserting
+	if exists {
+		err := er.RemoveSavedEvent(eventID, userID)
+		if err != nil {
+			log.Println("Failed to remove existing saved event:", err)
+			return err
+		}
+		return nil
+	}
+
+	// Prepare the SQL query for insertion
+	query := `
+        INSERT INTO saved_event (user_id, event_id)
+        VALUES ($1, $2)
+    `
+
+	// Execute the query to save the event
+	_, err = er.store.db.Exec(query, userID, eventID)
+	if err != nil {
+		log.Println("Failed to execute query:", err)
+		return err
+	}
+
+	return nil
+}
+
+func (er *EventRepository) IsSaved(eventID string, userID string) (bool, error) {
+	// Query the saved_event table to check if the user is a participant of the event
+	query := `SELECT EXISTS(SELECT 1 FROM saved_event WHERE user_id = $1 AND event_id = $2)`
+	var exists bool
+	err := er.store.db.QueryRow(query, userID, eventID).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+}
+
+func (er *EventRepository) RemoveSavedEvent(eventID string, userID string) error {
+	// Prepare the SQL query for deletion
+	query := `
+        DELETE FROM saved_event
+        WHERE user_id = $1 AND event_id = $2
+    `
+
+	// Execute the query to remove the saved event
+	_, err := er.store.db.Exec(query, userID, eventID)
+	if err != nil {
+		log.Println("Failed to execute query:", err)
+		return err
+	}
+
+	return nil
+}
