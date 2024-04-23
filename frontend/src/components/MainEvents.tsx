@@ -6,12 +6,15 @@ import SearchBar from "./Reusable/SearchBar";
 import CategoryItem from "./Reusable/CategoryItem";
 import Footer from "./Reusable/Footer";
 import EventItem from "./Reusable/EventItem";
+import NewItemField from "./Reusable/AddNewItemField";
+import { useAuth } from "./context/AuthContext";
 
 interface Props {
     PORT: string;
 }
 
 const MainPage = ({ PORT }: Props) => {
+    const { isLoggedIn, curruser } = useAuth();
     const [events, setEvents] = useState<Event[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [searchResults, setSearchResults] = useState([]);
@@ -97,15 +100,20 @@ const MainPage = ({ PORT }: Props) => {
                         </button>
                     ))}
                 </div>
-                {events != null ? (
-                    <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
-                        {events.map((item, index) => (
-                            <EventItem key={index} event={item} />
-                        ))}
-                    </div>
-                ) : (
-                    <span>No events found</span>
-                )}
+                <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                    {isLoggedIn && curruser != null && curruser.role === "organizer" ? (
+                        <NewItemField type={"event"} />
+                    ) : null}
+                    {events != null ? (
+                        <>
+                            {events.map((item, index) => (
+                                <EventItem key={index} event={item} />
+                            ))}
+                        </>
+                    ) : (
+                        <span>No events found</span>
+                    )}
+                </div>
             </div>
             <div className="hidden md:block">
                 <Footer />

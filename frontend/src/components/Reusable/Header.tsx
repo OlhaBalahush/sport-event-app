@@ -105,10 +105,10 @@ const Header = ({ PORT }: Props) => {
                     </a>
                     {isLoggedIn && curruser != null ? (
                         <div className="flex flex-row gap-5 md:h-full items-center">
-                            <button className="relative">
+                            <a href="/challenges" className="relative">
                                 <span className="flex items-center justify-center absolute top-0 right-0 rounded-full bg-custom-yellow w-4 h-4 text-add">5</span>
                                 <NotificationsBell />
-                            </button>
+                            </a>
                             <a href={`/user/${curruser.id}`} className="flex flex-row items-center gap-2 h-full hover:text-custom-dark-blue">
                                 <div className="h-full w-8 rounded-full overflow-hidden">
                                     <img

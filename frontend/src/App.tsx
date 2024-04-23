@@ -6,6 +6,9 @@ import EventPage from './components/Event';
 import ChallengesPage from './components/Challenges';
 import ChallengePage from './components/Challenge';
 import UserPage from './components/User';
+import Notifications from './components/Notifications';
+import CreateEvent from './components/CreateEvent';
+import CreateChallenge from './components/CreateChallenge';
 
 const PORT: string = 'http://localhost:7080'
 
@@ -34,6 +37,18 @@ function App() {
             <Route
               path='/user/:id'
               element={<UserPage PORT={PORT} />}
+            />
+            <Route
+              path='/notifications'
+              element={<Notifications PORT={PORT} />}
+            />
+            <Route
+              path='/create-event'
+              element={<CreateEvent PORT={PORT} />}
+            />
+            <Route
+              path='/create-challenge'
+              element={<CreateChallenge PORT={PORT} />}
             />
             {/* TODO add other routes */}
             <Route path='*' element={<Navigate to={"/"} />} />

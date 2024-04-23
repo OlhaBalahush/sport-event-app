@@ -7,8 +7,8 @@ interface Props {
 
 const EventItem = ({ event }: Props) => {
     return (
-        <a className='flex flex-col items-center gap-2 text-center' href={`/event/${event.id}`}>
-            <div className="min-w-[17rem] max-w-[24rem] max-h-[15rem]">
+        <a className='w-full min-w-[17rem] max-w-[24rem] flex flex-col items-center gap-2 text-center' href={`/event/${event.id}`}>
+            <div className="w-full max-h-[15rem]">
                 <img
                     className="min-w-full max-h-full object-cover"
                     // TODO take event imgs ?
