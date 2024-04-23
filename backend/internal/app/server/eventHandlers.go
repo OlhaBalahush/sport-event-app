@@ -1,10 +1,39 @@
 package server
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
+	"sport-event-app/backend/internal/models"
 	"sport-event-app/backend/pkg/router"
 )
+
+func (s *server) handleCreateEvent() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		event := &models.Event{}
+		if err := json.NewDecoder(r.Body).Decode(event); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		userId := r.Context().Value(ctxUserID).(string)
+		event.OrganizerID = userId
+		
+		fmt.Println("Event", event)
+
+		data, err := s.store.Event().Create(event)
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully retrieved all events!",
+			Data:    data,
+		})
+	}
+}
 
 func (s *server) handlerGetAllEvents() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

@@ -65,6 +65,8 @@ func (s *server) configureRouter() {
 	s.router.GET("/api/v1/jwt/events/join/:id", s.handleJoinEvent())
 	s.router.GET("/api/v1/jwt/events/save/:id", s.handleSaveEvent())
 
+	s.router.POST("/api/v1/organizer/events/create", s.handleCreateEvent())
+
 	s.router.POST("/api/v1/feedback/create", s.handlerCreateFeedback())
 
 	//CATEGORIES
