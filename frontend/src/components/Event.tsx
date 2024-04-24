@@ -14,7 +14,6 @@ import InputField from "./Reusable/FeedbackInputField";
 import FeedbackItem from "./Reusable/FeedbackItem";
 import ShareIcon from "./assets/Share";
 import SaveIcon from "./assets/Save";
-import RatePopup from "./Reusable/RatePopup";
 import { useAuth } from "./context/AuthContext";
 import AttendantItem from "./Reusable/AttendantItem";
 
@@ -96,7 +95,9 @@ const EventPage = ({ PORT }: Props) => {
         }).then(async response => {
             const res = await response.json();
             if (response.ok) {
-                setAttendants(res.data)
+                if (res.data != null) {
+                    setAttendants(res.data)
+                } 
             } else {
                 console.error(res.error)
             }
@@ -113,7 +114,9 @@ const EventPage = ({ PORT }: Props) => {
         }).then(async response => {
             const res = await response.json();
             if (response.ok) {
-                setEvents(res.data)
+                if (res.data != null) {
+                    setEvents(res.data)
+                }
             } else {
                 console.error(res.error)
             }
@@ -129,7 +132,9 @@ const EventPage = ({ PORT }: Props) => {
         }).then(async response => {
             const res = await response.json();
             if (response.ok) {
-                setCategories(res.data)
+                if (res.data != null) {
+                    setCategories(res.data)
+                }
             } else {
                 console.error(res.error)
             }
@@ -145,7 +150,9 @@ const EventPage = ({ PORT }: Props) => {
         }).then(async response => {
             const res = await response.json();
             if (response.ok) {
-                setImgs(res.data)
+                if (res.data != null) {
+                    setImgs(res.data)
+                }
             } else {
                 console.error(res.error)
             }
@@ -161,7 +168,9 @@ const EventPage = ({ PORT }: Props) => {
         }).then(async response => {
             const res = await response.json();
             if (response.ok) {
-                setFeedback(res.data)
+                if (res.data != null) {
+                    setFeedback(res.data)
+                }
             } else {
                 console.error(res.error)
             }
@@ -299,7 +308,7 @@ const EventPage = ({ PORT }: Props) => {
                                 onError={(e: any) => {
                                     e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${organizer?.id}`;
                                 }} />
-                        </div>isSaved
+                        </div>
                         {organizer?.fullname}
                     </a>
                     <div className="flex flex-row gap-5">

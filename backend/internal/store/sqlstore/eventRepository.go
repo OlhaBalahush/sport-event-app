@@ -13,7 +13,7 @@ type EventRepository struct {
 func (er *EventRepository) Create(event *models.Event) (string, error) {
 	var id string
 	// Insert event data into the events table
-	err := er.store.db.QueryRow("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+	err := er.store.db.QueryRow("INSERT INTO events (event_name, organizer_id, date_start, date_end, location, description, requirements, preparation, price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
 		event.Name, event.OrganizerID, event.DateStart, event.DateEnd, event.Location, event.Description, event.Requirements, event.Preparation, event.Price).Scan(&id)
 	if err != nil {
 		log.Println("Failed to create event:", err)
@@ -23,6 +23,15 @@ func (er *EventRepository) Create(event *models.Event) (string, error) {
 	// Insert image URLs into the images table
 	for _, img := range event.Imgs {
 		_, err := er.store.db.Exec("INSERT INTO images (event_id, img) VALUES ($1, $2)", id, img)
+		if err != nil {
+			log.Println("Failed to insert image URL:", err)
+			return "", err
+		}
+	}
+
+	// Insert categories category_relation table
+	for _, category := range event.Categories {
+		_, err := er.store.db.Exec("INSERT INTO category_relation (category_id, event_id, flag) VALUES ($1, $2, 'event')", category.ID, id)
 		if err != nil {
 			log.Println("Failed to insert image URL:", err)
 			return "", err

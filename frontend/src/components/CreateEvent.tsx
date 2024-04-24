@@ -23,6 +23,7 @@ const CreateEvent = ({ PORT }: Props) => {
     const [date, setDate] = useState<string>('');
     const [requirements, setRequirements] = useState<string>('');
     const [preparation, setPreparation] = useState<string>('');
+    const [price, setPrice] = useState<number>(0);
 
     const [error, setError] = useState<{ isError: boolean, text: string }>({ isError: false, text: "" });
 
@@ -59,22 +60,85 @@ const CreateEvent = ({ PORT }: Props) => {
         });
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    // Convert a File object to a Base64 string
+    function fileToBase64(file: File) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    // Convert an array of File objects to an array of Base64 strings
+    async function filesToBase64Array(files: File[]) {
+        const base64Array = await Promise.all(files.map(fileToBase64));
+        return base64Array;
+    }
+
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        for (let i = 0; i < imgs.length; i++) {
-            formData.append('images', imgs[i]);
-        }
+        // const formData = new FormData();
+        // for (let i = 0; i < imgs.length; i++) {
+        //     formData.append('images', imgs[i]);
+        // }
+        // console.log(imgs)
+        // const fileNames = imgs.map(file => file.name);
+        const base64Images = await filesToBase64Array(imgs);
+
+        const cdate = new Date(date);
 
         console.log(`name: ${name}, 
             overview: ${overview},
             categories: ${categories},
-            imgs: ${formData},
+            imgs: ${base64Images},
             location: ${location},
-            date: ${date},
+            date: ${cdate.toISOString()},
             requirements: ${requirements},
             preperation: ${preparation}`)
+
+        ///api/v1/organizer/events/create
+        await fetch(`${PORT}/api/v1/jwt/organizer/events/create`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                name,
+                description: overview,
+                dateStart: cdate.toISOString(),
+                dateEnd: cdate.toISOString(),
+                location,
+                requirements,
+                preparation,
+                imgs: base64Images,
+                price: price <= 0 ? {
+                    Float64: 0,
+                    Valid: false
+                } : {
+                    Float64: price,
+                    Valid: true
+                },
+                categories,
+            }),
+        }).then(async response => {
+            const res = await response.json();
+            console.log(res)
+            if (response.ok) {
+            } else {
+                setError({
+                    isError: true,
+                    text: res.error
+                });
+            }
+        }).catch(error => {
+            console.log(error)
+            setError({
+                isError: true,
+                text: 'Error'
+            });
+        });
     }
 
 
@@ -190,6 +254,18 @@ const CreateEvent = ({ PORT }: Props) => {
                             placeholder="Enter event preparation"
                             className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setPreparation(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className='flex flex-col gap-5'>
+                        <label htmlFor="name" className="">Price:</label>
+                        <input
+                            type="number"
+                            id="name"
+                            value={price}
+                            placeholder="Enter event price"
+                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
+                            onChange={(e) => setPrice(parseInt(e.target.value))}
                             required
                         />
                     </div>

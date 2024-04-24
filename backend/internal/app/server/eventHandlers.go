@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"sport-event-app/backend/internal/models"
@@ -19,8 +18,6 @@ func (s *server) handleCreateEvent() http.HandlerFunc {
 
 		userId := r.Context().Value(ctxUserID).(string)
 		event.OrganizerID = userId
-		
-		fmt.Println("Event", event)
 
 		data, err := s.store.Event().Create(event)
 		if err != nil {

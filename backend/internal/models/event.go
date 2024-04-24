@@ -20,4 +20,5 @@ type Event struct {
 	Attendees    int             `json:"attendees"`
 	Imgs         []string        `db:"imgs" json:"imgs"`
 	CreatedAt    time.Time       `db:"created_at" json:"createdAt"`
+	Categories   []Category      `json:"categories"`
 }
