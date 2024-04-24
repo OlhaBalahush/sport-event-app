@@ -1,20 +1,24 @@
 import Header from "./Reusable/Header";
 import Footer from "./Reusable/Footer";
 import { useAuth } from "./context/AuthContext";
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import ImgField from "./Reusable/AddImgField";
+import { useNavigate } from "react-router-dom";
+import { Category } from "../models/category";
 
 interface Props {
     PORT: string;
 }
 
 const CreateEvent = ({ PORT }: Props) => {
-    const { isLoggedIn, curruser } = useAuth();
-
+    const { curruser } = useAuth();
+    const navigate = useNavigate();
     const [name, setName] = useState<string>('');
     const [overview, setOverview] = useState<string>('');
-    const [categories, setCategories] = useState<string[]>([]);
-    const [imgs, setImgs] = useState<string[]>([]);
+    const [category, setCategory] = useState<string>('');
+    const [sugCategories, setSugCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [imgs, setImgs] = useState<File[]>([]);
     const [location, setLocation] = useState<string>('');
     const [date, setDate] = useState<string>('');
     const [requirements, setRequirements] = useState<string>('');
@@ -22,9 +26,66 @@ const CreateEvent = ({ PORT }: Props) => {
 
     const [error, setError] = useState<{ isError: boolean, text: string }>({ isError: false, text: "" });
 
-    const handleSubmit = () => {
-        console.log('submit')
+    useEffect(() => {
+        const takeAllCatgories = async () => {
+            await fetch(`${PORT}/api/v1/categories`, {
+                method: 'GET',
+                credentials: 'include'
+            }).then(async response => {
+                const res = await response.json();
+                if (response.ok) {
+                    setSugCategories(res.data)
+                } else {
+                    console.error(res.error)
+                }
+            }).catch(error => {
+                console.log('Error taking events:', error);
+            })
+        }
+
+        takeAllCatgories();
+    }, []);
+
+    useEffect(() => {
+        if (curruser != null && curruser.role === 'user') {
+            navigate('/')
+        }
+    }, [curruser])
+
+    const handleRemoveCategory = (index: number) => {
+        setCategories(prev => {
+            const updatedCategories = prev.filter((_, i) => i !== index);
+            return updatedCategories;
+        });
+    };
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        for (let i = 0; i < imgs.length; i++) {
+            formData.append('images', imgs[i]);
+        }
+
+        console.log(`name: ${name}, 
+            overview: ${overview},
+            categories: ${categories},
+            imgs: ${formData},
+            location: ${location},
+            date: ${date},
+            requirements: ${requirements},
+            preperation: ${preparation}`)
     }
+
+
+    const handleAddCategory = () => {
+        const selectedCategory = sugCategories.find(cat => cat.name === category);
+
+        // Check if category is not already added and if it exists in sugCategories
+        if (selectedCategory && !categories.find(cat => cat.id === selectedCategory.id)) {
+            setCategories(prev => [...prev, selectedCategory]);
+        }
+    };
 
     return (
         <div className="w-full absolute min-h-screen">
@@ -57,18 +118,34 @@ const CreateEvent = ({ PORT }: Props) => {
                     </div>
                     <div className='flex flex-col gap-5'>
                         <label htmlFor="categories" className="">Categories:</label>
-                        <input
-                            type="text"
-                            id="categories"
-                            // value={name}
-                            placeholder="Enter event category"
-                            className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
-                            // onChange={(e) => setName(e.target.value)}
-                            required
-                        />
+                        <div className={`h-[42px] bg-white flex flex-row gap-5 items-center border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}>
+                            <select
+                                id="categories"
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                className='w-full bg-transparent border-transparent hover:border-transparent active:border-transparent rounded-lg'>
+                                {sugCategories.map((item, _) => (
+                                    <option key={item.id} value={item.name}>{item.name}</option>
+                                ))}
+                            </select>
+                            <button className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] md:h-full rounded-lg hover:bg-custom-light-blue active:bg-blue-900 px-3"
+                                onClick={handleAddCategory}>
+                                +
+                            </button>
+                        </div>
                     </div>
-                    <ImgField />
-                    <div className="grid md:grid-cols-2 gap-5">
+                    {categories.length != 0 ? (
+                        <div className="flex flex-wrap gap-5">
+                            {categories.map((item, index) => (
+                                <div key={index} className="flex flex-row gap-2 items-center w-auto bg-custom-light-blue px-4 py-1 rounded-lg text-custom-white">
+                                    {item.name}
+                                    <button onClick={() => handleRemoveCategory(index)}>✕</button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : null}
+                    <ImgField setSelectedImages={setImgs} selectedImages={imgs} />
+                    <div className="md:grid md:grid-cols-2 gap-5">
                         <div className='flex flex-col gap-5'>
                             <label htmlFor="location" className="">Location:</label>
                             <input
@@ -119,7 +196,10 @@ const CreateEvent = ({ PORT }: Props) => {
                     <span className='w-full text-center text-red-500'>
                         {error.isError ? (error.text) : null}
                     </span>
-                    <button className='flex items-center justify-center bg-custom-dark-blue text-white h-10 rounded-lg hover:bg-custom-light-blue active:bg-blue-900' type="submit">Create</button>
+                    <button className='flex items-center justify-center bg-custom-dark-blue text-white h-10 rounded-lg hover:bg-custom-light-blue active:bg-blue-900'
+                        type="submit">
+                        Create
+                    </button>
                 </form>
             </div>
             <div className="hidden md:block">
