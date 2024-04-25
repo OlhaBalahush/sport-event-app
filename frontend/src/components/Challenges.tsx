@@ -10,12 +10,15 @@ import AwardIcon from "./assets/AwardIcon";
 import AimIcon from "./assets/AimIcon";
 import CalendarIcon from "./assets/CalendarIcon";
 import { timeForm } from "../models/timeForm";
+import { useAuth } from "./context/AuthContext";
+import NewItemField from "./Reusable/AddNewItemField";
 
 interface Props {
     PORT: string;
 }
 
 const ChallengesPage = ({ PORT }: Props) => {
+    const { isLoggedIn, curruser } = useAuth();
     const [categories, setCategories] = useState<Category[]>([]);
     const [challenges, setChallenges] = useState<Challenge[]>([]);
 
@@ -90,7 +93,7 @@ const ChallengesPage = ({ PORT }: Props) => {
                             <div className="flex flex-col md:flex-row items-center text-left justify-between gap-5">
                                 <div className="flex flex-col md:flex-row gap-5">
                                     <div className="flex flex-row items-center gap-3 text-left">
-                                        <AwardIcon color="#FFFFFF"/>
+                                        <AwardIcon color="#FFFFFF" />
                                         {challenges[0].award}
                                     </div>
                                     {/* <div className="flex flex-row items-center gap-3 text-left">
@@ -98,8 +101,8 @@ const ChallengesPage = ({ PORT }: Props) => {
                                         {challenges[0].aim}
                                     </div> */}
                                     <div className="flex flex-row items-center gap-3 text-left">
-                                        <CalendarIcon color="#FFFFFF"/>
-                                        {timeForm({rawDate: challenges[0].deadline})}
+                                        <CalendarIcon color="#FFFFFF" />
+                                        {timeForm({ rawDate: challenges[0].deadline })}
                                     </div>
                                 </div>
                                 <a href={`/challenge/${challenges[0].id}`} className="flex items-center justify-center bg-custom-yellow text-custom-dark h-[40px] w-full md:w-40 rounded-lg hover:bg-custom-orange">
@@ -114,17 +117,22 @@ const ChallengesPage = ({ PORT }: Props) => {
                         <CategoryItem key={index} category={item.name} handleCategory={handleCategory} />
                     ))}
                 </div>
-                {challenges === null ? (
-                    <span>No challenges yet</span>
-                ) : challenges.length === 1 ? (
-                    <span>No more challenges</span>
-                ) : (
-                    <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
-                        {challenges.slice(1).map((item, index) => (
-                            <ChallengeItem key={index} challenge={item} />
-                        ))}
-                    </div>
-                )}
+                <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                    {isLoggedIn && curruser != null && curruser.role === "admin" ? (
+                        <NewItemField type={"challenge"} />
+                    ) : null}
+                    {challenges === null ? (
+                        <span>No challenges yet</span>
+                    ) : challenges.length === 1 ? (
+                        <span>No more challenges</span>
+                    ) : (
+                        <>
+                            {challenges.slice(1).map((item, index) => (
+                                <ChallengeItem key={index} challenge={item} />
+                            ))}
+                        </>
+                    )}
+                </div>
             </div>
             <div className="hidden md:block">
                 <Footer />
