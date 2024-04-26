@@ -10,13 +10,14 @@ import { Challenge } from "../models/challenge";
 import { useAuth } from "./context/AuthContext";
 import EventItem from "./Reusable/EventItem";
 import ChallengeItem from "./Reusable/ChallengeItem";
+import SettingsPopup from "./Reusable/SettingsPopup";
 
 interface Props {
     PORT: string;
 }
 
 const UserPage = ({ PORT }: Props) => {
-    const { isLoggedIn, curruser } = useAuth();
+    const { curruser } = useAuth();
     const { id } = useParams();
     const [user, setUser] = useState<User>();
     const [categories, setCategories] = useState<Category[]>([]);
@@ -26,24 +27,11 @@ const UserPage = ({ PORT }: Props) => {
     const [eventsType, setEventsType] = useState('attended');
     const [challengesType, setChallengesType] = useState('attended');
 
-    useEffect(() => {
-        const takeEvent = async () => {
-            await fetch(`${PORT}/api/v1/users/${id}`, {
-                method: 'GET',
-                credentials: 'include'
-            }).then(async response => {
-                const res = await response.json();
-                if (response.ok) {
-                    setUser(res.data)
-                } else {
-                    console.error(res.error)
-                }
-            }).catch(error => {
-                console.log('Error taking event:', error);
-            })
-        }
+    const [isSettings, setIsSettings] = useState(false);
+    const [isRequest, setIsRequest] = useState(false);
 
-        takeEvent();
+    useEffect(() => {
+        takeUser();
     }, []);
 
     useEffect(() => {
@@ -62,6 +50,22 @@ const UserPage = ({ PORT }: Props) => {
         takeChallenges()
     }, [challengesType])
 
+    const takeUser = async () => {
+        await fetch(`${PORT}/api/v1/users/${id}`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                setUser(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking user:', error);
+        })
+    }
+
     const takeCategories = async () => {
         await fetch(`${PORT}/api/v1/users/categories/${user?.id}`, {
             method: 'GET',
@@ -77,7 +81,7 @@ const UserPage = ({ PORT }: Props) => {
             console.log('Error taking events:', error);
         })
     }
-    
+
     const takeEvents = async () => {
         await fetch(`${PORT}/api/v1/users/${id}/events/${eventsType}`, {
             method: 'GET',
@@ -118,9 +122,27 @@ const UserPage = ({ PORT }: Props) => {
         setChallengesType(type)
     }
 
+    const handleLogout = () => {
+        console.log('logout')
+    }
+
+    const toogleSettings = () => {
+        setIsSettings(prev => !prev);
+        takeUser();
+        takeCategories();
+    }
+
+    // TODO check if request is sent already
+    const toogleRequestPopup = () => {
+        setIsRequest(prev => !prev);
+    }
+
     return (
         <div className="w-full absolute min-h-screen">
             <Header PORT={PORT} />
+            {isSettings ? (
+                <SettingsPopup PORT={PORT} onClose={toogleSettings} />
+            ) : null}
             <div className="mx-12 xl:mx-40 my-14 py-12 flex flex-col items-center gap-8">
                 <div className="w-full grid md:grid-cols-4 gap-5 md:gap-10">
                     <div style={{ height: 'fit-content' }}
@@ -135,7 +157,9 @@ const UserPage = ({ PORT }: Props) => {
                         </div>
                         <span className="w-full text-center">{user?.fullname} (AKA {user?.username})</span>
                         {user?.id === curruser?.id ? (
-                            <button className="w-full font-bold text-h-2 flex flex-row items-center justify-between">
+                            <button
+                                className="w-fullhandleLogout font-bold text-h-2 flex flex-row items-center justify-between"
+                                onClick={toogleSettings}>
                                 <span>Settings</span>
                                 <EditIcon />
                             </button>
@@ -155,9 +179,31 @@ const UserPage = ({ PORT }: Props) => {
                             </div>
                         ) : null}
                         {user?.id === curruser?.id ? (
-                            <button className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
-                                Become organizer
-                            </button>
+                            <div className="flex flex-col gap-5">
+                                {curruser?.role == 'user' ? (
+                                    <button className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                                        Become organizer
+                                    </button>
+                                ) : curruser?.role === 'organizer' ? (
+                                    <a href='create-event' className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                                        Create event
+                                    </a>
+                                ) : (
+                                    <>
+                                        <a href='/create-event' className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                                            Create event
+                                        </a>
+                                        <a href='/create-challenge' className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                                            Create challenge
+                                        </a>
+                                    </>
+                                )}
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center justify-center bg-custom-bg text-custom-dark border border-custom-dark h-[40px] w-full rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
+                                    Log Out
+                                </button>
+                            </div>
                         ) : null}
                     </div>
                     <div className="md:col-span-3 flex flex-col gap-5">
@@ -178,10 +224,10 @@ const UserPage = ({ PORT }: Props) => {
                                 ) : null}
                             </div>
                         </div>
-                        { events == null || events.length === 0 ? (
+                        {events == null || events.length === 0 ? (
                             <span>User has events yet</span>
                         ) : (
-                            <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                            <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
                                 {events.map((item, index) => (
                                     <EventItem key={index} event={item} />
                                 ))}
@@ -202,10 +248,10 @@ const UserPage = ({ PORT }: Props) => {
                                 ) : null}
                             </div>
                         </div>
-                        { challenges == null || challenges.length === 0 ? (
+                        {challenges == null || challenges.length === 0 ? (
                             <span>User has challenges yet</span>
                         ) : (
-                            <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                            <div className="w-full grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
                                 {challenges.map((item, index) => (
                                     <ChallengeItem key={index} challenge={item} />
                                 ))}

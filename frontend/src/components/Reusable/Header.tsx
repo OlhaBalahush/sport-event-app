@@ -105,7 +105,7 @@ const Header = ({ PORT }: Props) => {
                     </a>
                     {isLoggedIn && curruser != null ? (
                         <div className="flex flex-row gap-5 md:h-full items-center">
-                            <a href="/challenges" className="relative">
+                            <a href="/notifications" className="relative">
                                 <span className="flex items-center justify-center absolute top-0 right-0 rounded-full bg-custom-yellow w-4 h-4 text-add">5</span>
                                 <NotificationsBell />
                             </a>

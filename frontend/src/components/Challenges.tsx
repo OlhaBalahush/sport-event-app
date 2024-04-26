@@ -117,14 +117,14 @@ const ChallengesPage = ({ PORT }: Props) => {
                         <CategoryItem key={index} category={item.name} handleCategory={handleCategory} />
                     ))}
                 </div>
-                <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                <div className="w-full grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
                     {isLoggedIn && curruser != null && curruser.role === "admin" ? (
                         <NewItemField type={"challenge"} />
                     ) : null}
                     {challenges === null ? (
-                        <span>No challenges yet</span>
+                        <span>{curruser?.role != 'admin' ? (<>No challenges yet</>) : null}</span>
                     ) : challenges.length === 1 ? (
-                        <span>No more challenges</span>
+                        <span>{curruser?.role != 'admin' ? (<>No more challenges</>) : null}</span>
                     ) : (
                         <>
                             {challenges.slice(1).map((item, index) => (

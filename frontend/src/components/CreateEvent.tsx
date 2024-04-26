@@ -177,6 +177,7 @@ const CreateEvent = ({ PORT }: Props) => {
                                 ))}
                             </select>
                             <button className="flex items-center justify-center bg-custom-dark-blue text-white h-full rounded-lg hover:bg-custom-light-blue active:bg-blue-900 px-3"
+                                type="button"
                                 onClick={handleAddCategory}>
                                 +
                             </button>

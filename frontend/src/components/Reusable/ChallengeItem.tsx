@@ -1,6 +1,5 @@
 import { Challenge } from "../../models/challenge";
 import AimIcon from "../assets/AimIcon";
-import categoriesIcons from "../assets/CategoriesIcons";
 
 interface Props {
     challenge: Challenge;
@@ -9,7 +8,7 @@ interface Props {
 const ChallengeItem = ({ challenge }: Props) => {
 
     return (
-        <a href={`/challenge/${challenge.id}`} className='w-[280px] flex flex-col items-center gap-2 text-center'>
+        <a href={`/challenge/${challenge.id}`} className='w-max-[280px] flex flex-col gap-2 text-center'>
             <div className="w-full h-28 flex justify-center items-center bg-cover bg-no-repeat"
                 style={{ backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://api.dicebear.com/8.x/shapes/svg?seed=${challenge.id})` }}>
                 <div className="w-20 h-20 flex justify-center items-center">

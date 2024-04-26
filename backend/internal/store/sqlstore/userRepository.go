@@ -99,12 +99,29 @@ func (ur *UserRepository) Read() ([]*models.User, error) {
 
 // UpdateUser updates an existing user in the database
 func (ur *UserRepository) Update(user *models.User) error {
-	_, err := ur.store.db.Exec("UPDATE users SET fullname=$1, username=$2, email=$3, password=$4, role=$5, img=$6, level=$7 WHERE id=$8",
-		user.Fullname, user.Username, user.Email, user.Password, user.Role, user.Img, user.Level, user.ID)
+	_, err := ur.store.db.Exec("UPDATE users SET fullname=$1, username=$2, email=$3, role=$4, img=$5, level=$6 WHERE id=$7",
+		user.Fullname, user.Username, user.Email, user.Role, user.Img, user.Level, user.ID)
 	if err != nil {
 		log.Println("Failed to update user:", err)
 		return err
 	}
+
+	// Delete prev categories category_relation table
+	_, err = ur.store.db.Exec("DELETE FROM category_relation WHERE user_id = $1", user.ID)
+	if err != nil {
+		log.Println("Failed to delete entities:", err)
+		return err
+	}
+
+	// Insert categories category_relation table
+	for _, category := range user.Categories {
+		_, err := ur.store.db.Exec("INSERT INTO category_relation (category_id, user_id, flag) VALUES ($1, $2, 'user')", category.ID, user.ID)
+		if err != nil {
+			log.Println("Failed to insert image URL:", err)
+			return err
+		}
+	}
+
 	return nil
 }
 

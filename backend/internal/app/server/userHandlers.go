@@ -52,6 +52,26 @@ func (s *server) handlerCreateUser() http.HandlerFunc {
 	}
 }
 
+func (s *server) handlerUpdateUser() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := &models.User{}
+		if err := json.NewDecoder(r.Body).Decode(user); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		if err := s.store.User().Update(user); err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusCreated, Response{
+			Message: "Successfully updated user!",
+			Data:    user,
+		})
+	}
+}
+
 func (s *server) handlerGetAllUsers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
