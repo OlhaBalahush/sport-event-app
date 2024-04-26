@@ -10,7 +10,7 @@ interface Props {
 }
 
 const CreateChallenge = ({ PORT }: Props) => {
-    const { isLoggedIn, curruser } = useAuth();
+    const { curruser } = useAuth();
     const navigate = useNavigate();
 
     const [name, setName] = useState<string>('');
@@ -70,19 +70,44 @@ const CreateChallenge = ({ PORT }: Props) => {
         });
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log(`name: ${name}, 
-            overview: ${overview},
-            categories: ${categories},
-            organization: ${organizationName} ${organizationLink},
-            start date: ${startDate},
-            end date: ${endDate},
-            aim: ${aim},
-            award: ${award},
-            details rules: ${detailsRules},
-            `)
+        const deadline = new Date(endDate);
+
+        await fetch(`${PORT}/api/v1/jwt/admin/challenges/create`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                name,
+                organizationName,
+                organizationLink,
+                deadline: deadline.toISOString(),
+                aim,
+                award,
+                overview,
+                detailsRules,
+                categories,
+            }),
+        }).then(async response => {
+            const res = await response.json();
+            console.log(res)
+            if (response.ok) {
+                navigate('/challenges')
+            } else {
+                setError({
+                    isError: true,
+                    text: res.error
+                });
+            }
+        }).catch(error => {
+            console.log(error)
+            setError({
+                isError: true,
+                text: 'Error'
+            });
+        });
     }
 
     return (
@@ -97,7 +122,7 @@ const CreateChallenge = ({ PORT }: Props) => {
                             type="text"
                             id="name"
                             value={name}
-                            placeholder="Enter your name"
+                            placeholder="Enter challenge name"
                             className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -109,27 +134,27 @@ const CreateChallenge = ({ PORT }: Props) => {
                             type="text"
                             id="organizationName"
                             value={organizationName}
-                            placeholder="Enter your organization name"
+                            placeholder="Enter challenge organization name"
                             className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setOrganizationName(e.target.value)}
                             required
                         />
                         <input
                             type="text"
-                            id="name"
+                            id="link"
                             value={organizationLink}
-                            placeholder="Enter your organization link"
+                            placeholder="Enter challenge organization link"
                             className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setOrganizationLink(e.target.value)}
                             required
                         />
                     </div>
                     <div className='flex flex-col gap-5'>
-                        <label htmlFor="name" className="">Overview:</label>
+                        <label htmlFor="overview" className="">Overview:</label>
                         <textarea
-                            id="name"
+                            id="overview"
                             value={overview}
-                            placeholder="Enter your name"
+                            placeholder="Enter challenge overview"
                             className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setOverview(e.target.value)}
                             required
@@ -215,7 +240,7 @@ const CreateChallenge = ({ PORT }: Props) => {
                         <textarea
                             id="details-rules"
                             value={detailsRules}
-                            placeholder="Enter your details & rules"
+                            placeholder="Enter challenge details & rules"
                             className={`border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}
                             onChange={(e) => setDetailsRules(e.target.value)}
                             required

@@ -83,6 +83,8 @@ func (s *server) configureRouter() {
 	s.router.GET("/api/v1/jwt/challenges/saved/:id", s.handleGetChallengeSavingStatus())
 	s.router.GET("/api/v1/jwt/challenges/join/:id", s.handleJoinChallenge())
 	s.router.GET("/api/v1/jwt/challenges/save/:id", s.handleSaveChallenge())
+	s.router.POST("/api/v1/jwt/admin/challenges/create", s.handleCreateChallenges())
+	///api/v1/jwt/admin/challenges/create
 
 	s.router.POST("/test", s.test())
 	//<------------AUTH MIDDLEWARE REQUIRED-------------->

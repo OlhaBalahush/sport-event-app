@@ -79,27 +79,10 @@ const CreateEvent = ({ PORT }: Props) => {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        // const formData = new FormData();
-        // for (let i = 0; i < imgs.length; i++) {
-        //     formData.append('images', imgs[i]);
-        // }
-        // console.log(imgs)
-        // const fileNames = imgs.map(file => file.name);
         const base64Images = await filesToBase64Array(imgs);
 
         const cdate = new Date(date);
 
-        console.log(`name: ${name}, 
-            overview: ${overview},
-            categories: ${categories},
-            imgs: ${base64Images},
-            location: ${location},
-            date: ${cdate.toISOString()},
-            requirements: ${requirements},
-            preperation: ${preparation}`)
-
-        ///api/v1/organizer/events/create
         await fetch(`${PORT}/api/v1/jwt/organizer/events/create`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -126,6 +109,7 @@ const CreateEvent = ({ PORT }: Props) => {
             const res = await response.json();
             console.log(res)
             if (response.ok) {
+                navigate('/')
             } else {
                 setError({
                     isError: true,

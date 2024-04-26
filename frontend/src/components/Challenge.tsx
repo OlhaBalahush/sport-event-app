@@ -68,9 +68,10 @@ const ChallengePage = ({ PORT }: Props) => {
             credentials: 'include'
         }).then(async response => {
             const res = await response.json();
-            console.log(res)
             if (response.ok) {
-                setAttendants(res.data)
+                if (res.data != null) {
+                    setAttendants(res.data)
+                }
             } else {
                 console.error(res.error)
             }
@@ -86,7 +87,9 @@ const ChallengePage = ({ PORT }: Props) => {
         }).then(async response => {
             const res = await response.json();
             if (response.ok) {
-                setCategories(res.data)
+                if (res.data != null) {
+                    setCategories(res.data)
+                }
             } else {
                 console.error(res.error)
             }
@@ -195,7 +198,7 @@ const ChallengePage = ({ PORT }: Props) => {
                             </span>
                         </a>
                         <div className="flex flex-row gap-5">
-                            {categories.map((item, index) => (
+                            {categories?.map((item, index) => (
                                 <div key={index} className="bg-custom-orange px-4 py-1 rounded-lg text-custom-white md:mb-4">{item.name}</div>
                             ))}
                         </div>
@@ -217,12 +220,12 @@ const ChallengePage = ({ PORT }: Props) => {
                                 <CalendarIcon color="#65656B" />
                             </div>
                             {timeForm({ rawDate: challenge?.deadline || "" })}
-                            Join           </div>
+                        </div>
                         <div className="flex flex-row gap-4 items-center">
                             <div className="w-[35px] flex justify-center">
                                 <AwardIcon color="#65656B" />
                             </div>
-                            Join               {challenge?.award}
+                            {challenge?.award}
                         </div>
                     </div>
                     <div className="md:col-span-2 flex flex-col gap-5">

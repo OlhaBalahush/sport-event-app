@@ -1,10 +1,34 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/url"
+	"sport-event-app/backend/internal/models"
 	"sport-event-app/backend/pkg/router"
 )
+
+func (s *server) handleCreateChallenges() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		//
+		challenge := &models.Challenge{}
+		if err := json.NewDecoder(r.Body).Decode(challenge); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		data, err := s.store.Challenge().Create(challenge)
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, Response{
+			Message: "Successfully created challenge!",
+			Data:    data,
+		})
+	}
+}
 
 func (s *server) handlerGetAllChallenges() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

@@ -19,6 +19,15 @@ func (cr *ChallengeRepository) Create(challenge *models.Challenge) (string, erro
 		return "", err
 	}
 
+	// Insert categories category_relation table
+	for _, category := range challenge.Categories {
+		_, err := cr.store.db.Exec("INSERT INTO category_relation (category_id, challenge_id, flag) VALUES ($1, $2, 'challenge')", category.ID, id)
+		if err != nil {
+			log.Println("Failed to insert image URL:", err)
+			return "", err
+		}
+	}
+
 	return id, nil
 }
 

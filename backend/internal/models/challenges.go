@@ -19,4 +19,5 @@ type Challenge struct {
 	DetailsRules     string         `db:"details_rules" json:"detailsRules"`
 	CreatedAt        time.Time      `db:"created_at" json:"createdAt"`
 	Points           int            `db:"points" json:"points"` // for participants
+	Categories       []Category     `json:"categories"`         // for create
 }
