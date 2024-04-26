@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Reusable/Header";
 import Footer from "./Reusable/Footer";
 import { useEffect, useState } from "react";
@@ -17,7 +17,8 @@ interface Props {
 }
 
 const UserPage = ({ PORT }: Props) => {
-    const { curruser } = useAuth();
+    const navigate = useNavigate();
+    const { curruser, logout } = useAuth();
     const { id } = useParams();
     const [user, setUser] = useState<User>();
     const [categories, setCategories] = useState<Category[]>([]);
@@ -123,7 +124,19 @@ const UserPage = ({ PORT }: Props) => {
     }
 
     const handleLogout = () => {
-        console.log('logout')
+        fetch(`${PORT}/api/v1/users/logout`, {
+            method: "GET",
+            credentials: "include",
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                logout();
+                navigate('/');
+            } else {
+                console.error(res.error);
+            }
+        })
+
     }
 
     const toogleSettings = () => {
