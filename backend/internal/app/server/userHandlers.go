@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"sport-event-app/backend/internal/models"
@@ -103,8 +104,6 @@ func (s *server) handlerGetAllUsers() http.HandlerFunc {
 		})
 	}
 }
-
-// TODO
 
 func (s *server) handlerLogOut() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -309,6 +308,48 @@ func (s *server) handlerGetUserEvents() http.HandlerFunc {
 		s.respond(w, r, http.StatusOK, Response{
 			Message: "Successfully got user events!",
 			Data:    events,
+		})
+	}
+}
+
+func (s *server) handlerRequest() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		request := &models.Request{}
+		if err := json.NewDecoder(r.Body).Decode(request); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		userId := r.Context().Value(ctxUserID).(string)
+		request.UserID = userId
+
+		id, err := s.store.Request().Create(request)
+		if err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+		fmt.Println(id)
+
+		s.respond(w, r, http.StatusCreated, Response{
+			Message: "Successfully request added!",
+			Data:    request,
+		})
+	}
+}
+
+func (s *server) handleGetUserRequestStatus() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userId := r.Context().Value(ctxUserID).(string)
+
+		res, err := s.store.Request().CheckByUserID(userId)
+		if err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, r, http.StatusCreated, Response{
+			Message: "Successfully request status!",
+			Data:    res,
 		})
 	}
 }

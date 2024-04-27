@@ -1,7 +1,8 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import RateStar from '../assets/RateStar';
 import Logo from '../assets/Logo';
 import FileField from './AddFileField';
+import { filesToBase64Array } from '../../models/fileToString';
 
 interface Props {
     PORT: string
@@ -13,8 +14,42 @@ const RequestPopup = ({ PORT, onClose }: Props) => {
     const [docs, setDocs] = useState<File[]>([]);
     const [error, setError] = useState<{ isError: boolean, text: string }>({ isError: false, text: "" });
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        const base64Images = await filesToBase64Array(docs);
+
+        if (docs.length === 0) {
+            setError({isError: true, text: "Upload at least one document to prove your qualification"})
+            return
+        }
+
+        await fetch(`${PORT}/api/v1/jwt/users/request`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                // TODO
+                comment: qualification,
+                file: base64Images[0]
+            }),
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                onClose();
+            } else {
+                setError({
+                    isError: true,
+                    text: res.error
+                });
+            }
+        }).catch(error => {
+            console.log(error)
+            setError({
+                isError: true,
+                text: 'Error'
+            });
+        });
         console.log('submit')
     }
 

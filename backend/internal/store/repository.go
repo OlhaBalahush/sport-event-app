@@ -80,6 +80,7 @@ type RequestRepository interface {
 	Update(request *models.Request) error
 	Read() ([]*models.Request, error)
 	Delete(id string) error
+	CheckByUserID(id string) (bool, error)
 }
 
 type NotificationRepository interface {

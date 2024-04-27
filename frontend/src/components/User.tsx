@@ -32,6 +32,8 @@ const UserPage = ({ PORT }: Props) => {
     const [isSettings, setIsSettings] = useState(false);
     const [isRequest, setIsRequest] = useState(false);
 
+    const [isRequested, setIsRequested] = useState(false);
+
     useEffect(() => {
         takeUser();
     }, []);
@@ -41,6 +43,7 @@ const UserPage = ({ PORT }: Props) => {
             takeCategories();
             takeEvents();
             takeChallenges();
+            takeRequestStatus();
         }
     }, [user]);
 
@@ -108,6 +111,23 @@ const UserPage = ({ PORT }: Props) => {
             const res = await response.json();
             if (response.ok) {
                 setChallenges(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking events:', error);
+        })
+    }
+
+    const takeRequestStatus = async () => {
+        await fetch(`${PORT}/api/v1/jwt/users/is/request`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            console.log(res)
+            if (response.ok) {
+                setIsRequested(res.data)
             } else {
                 console.error(res.error)
             }
@@ -192,8 +212,15 @@ const UserPage = ({ PORT }: Props) => {
                         {user?.id === curruser?.id ? (
                             <div className="flex flex-col gap-5">
                                 {curruser?.role == 'user' ? (
-                                    <button className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
-                                        Become organizer
+                                    <button
+                                        onClick={toogleRequestPopup}
+                                        className={`w-full h-[40px] flex items-center justify-center rounded-lg text-white ${isRequested ? 'bg-custom-light-blue' : 'bg-custom-dark-blue hover:bg-custom-light-blue active:bg-blue-900'}`}
+                                        disabled={isRequested}>
+                                        {isRequested ? (
+                                            <span>Request on process</span>
+                                        ) : (
+                                            <span>Become organizer</span>
+                                        )}
                                     </button>
                                 ) : curruser?.role === 'organizer' ? (
                                     <a href='create-event' className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
@@ -274,7 +301,9 @@ const UserPage = ({ PORT }: Props) => {
             {isSettings ? (
                 <SettingsPopup PORT={PORT} onClose={toogleSettings} />
             ) : null}
-            <RequestPopup PORT={PORT} onClose={toogleRequestPopup} />
+            {isRequest ? (
+                <RequestPopup PORT={PORT} onClose={toogleRequestPopup} />
+            ) : null}
             <div className="hidden md:block">
                 <Footer />
             </div>
