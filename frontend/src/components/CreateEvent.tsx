@@ -152,11 +152,12 @@ const CreateEvent = ({ PORT }: Props) => {
                     <div className='flex flex-col gap-5'>
                         <label htmlFor="categories" className="">Categories:</label>
                         <div className={`h-[42px] bg-white flex flex-row gap-5 items-center border ${error.isError ? 'border-red-500' : 'border-custom-dark'} rounded-lg px-4 py-2`}>
-                            <select
+                        <select
                                 id="categories"
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
                                 className='w-full bg-transparent border-transparent hover:border-transparent active:border-transparent rounded-lg'>
+                                <option disabled key={-1} value={''}>Choose category</option>
                                 {sugCategories.map((item, _) => (
                                     <option key={item.id} value={item.name}>{item.name}</option>
                                 ))}
@@ -173,7 +174,7 @@ const CreateEvent = ({ PORT }: Props) => {
                             {categories.map((item, index) => (
                                 <div key={index} className="flex flex-row gap-2 items-center w-auto bg-custom-light-blue px-4 py-1 rounded-lg text-custom-white">
                                     {item.name}
-                                    <button onClick={() => handleRemoveCategory(index)}>✕</button>
+                                    <button type="button" onClick={() => handleRemoveCategory(index)}>✕</button>
                                 </div>
                             ))}
                         </div>
