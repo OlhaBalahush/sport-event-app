@@ -96,8 +96,16 @@ func (s *server) configureRouter() {
 	s.router.GET("/api/v1/users/:id/events/:type", s.handlerGetUserEvents())
 	// TODO change to PUT
 	s.router.POST("/api/v1/jwt/users/update", s.handlerUpdateUser())
+
+	//REQUESTS & NOTIFICATIONS
 	s.router.POST("/api/v1/jwt/users/request", s.handlerRequest())
 	s.router.GET("/api/v1/jwt/users/is/request", s.handleGetUserRequestStatus())
+
+	s.router.GET("/api/v1/jwt/admin/requests", s.handleGetAllRequests())
+	s.router.GET("/api/v1/jwt/admin/requests/:id/:status", s.handleUpdateRequest())
+
+	s.router.GET("/api/v1/jwt/notifications/num", s.handleGetNumAllNotifications())
+	s.router.GET("/api/v1/jwt/notifications", s.handleGetAllNotifications())
 
 	//<------------AUTH + ADMIN MIDDLEWARE REQUIRED-------------->
 	//USERS

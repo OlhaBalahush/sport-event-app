@@ -111,3 +111,14 @@ func (rr *RequestRepository) CheckByUserID(id string) (bool, error) {
 	}
 	return exists, nil
 }
+
+func (rr *RequestRepository) FindByID(id int) (*models.Request, error) {
+	row := rr.store.db.QueryRow("SELECT id, user_id, comment, file, created_at FROM requests WHERE id = $1", id)
+	request := &models.Request{}
+	err := row.Scan(&request.ID, &request.UserID, &request.Comment, &request.File, &request.CreatedAt)
+	if err != nil {
+		log.Println("Failed to get request by ID:", err)
+		return nil, err
+	}
+	return request, nil
+}

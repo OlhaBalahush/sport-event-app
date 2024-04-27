@@ -21,6 +21,8 @@ const Header = ({ PORT }: Props) => {
     const [showLogIn, setShowLogIn] = useState(false);
     const [showSetUp, setShowSetUp] = useState(false);
 
+    const [notifNum, SetNotifNum] = useState<number>(0);
+
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -49,6 +51,28 @@ const Header = ({ PORT }: Props) => {
         }
     }, [])
 
+    useEffect(() => {
+        if (isLoggedIn && curruser != null) {
+            takeNotifNum();
+        }
+    }, [curruser])
+
+    const takeNotifNum = async () => {
+        await fetch(`${PORT}/api/v1/jwt/notifications/num`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            if (response.ok) {
+                SetNotifNum(res.data)
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking user:', error);
+        })
+    }
+
     const handleSubmit = () => {
         console.log('submit')
     }
@@ -65,7 +89,6 @@ const Header = ({ PORT }: Props) => {
 
     const toogleSetUpPopup = () => {
         setShowMenu(false)
-        // setShowSignUp(false)
         setShowSetUp((prev) => !prev)
     }
 
@@ -118,7 +141,9 @@ const Header = ({ PORT }: Props) => {
                     {isLoggedIn && curruser != null ? (
                         <div className="flex flex-row gap-5 md:h-full items-center">
                             <a href="/notifications" className="relative">
-                                <span className="flex items-center justify-center absolute top-0 right-0 rounded-full bg-custom-yellow w-4 h-4 text-add">5</span>
+                                {notifNum != 0 ? (
+                                    <span className="flex items-center justify-center absolute top-0 right-0 rounded-full bg-custom-yellow w-4 h-4 text-add">{notifNum}</span>
+                                ) : null}
                                 <NotificationsBell />
                             </a>
                             <a href={`/user/${curruser.id}`} className="flex flex-row items-center gap-2 h-full hover:text-custom-dark-blue">
@@ -160,7 +185,7 @@ const Header = ({ PORT }: Props) => {
                 <SignUp PORT={PORT} onClose={(res) => toogleSignUpPopup(res)} onChange={onChange} />
             ) : null}
             {isLoggedIn && showSetUp ? (
-                <SetUpPopup PORT={PORT} onClose={toogleSetUpPopup}/>
+                <SetUpPopup PORT={PORT} onClose={toogleSetUpPopup} />
             ) : null}
         </>
     )

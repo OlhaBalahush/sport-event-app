@@ -81,6 +81,7 @@ type RequestRepository interface {
 	Read() ([]*models.Request, error)
 	Delete(id string) error
 	CheckByUserID(id string) (bool, error)
+	FindByID(id int) (*models.Request, error)
 }
 
 type NotificationRepository interface {
