@@ -5,7 +5,7 @@ import Google from '../assets/Google';
 import Github from '../assets/Github';
 import Logo from '../assets/Logo';
 import { Category } from '../../models/category';
-import ImgField from '../Reusable/AddImgField';
+import FileField from '../Reusable/AddFileField';
 import { filesToBase64Array } from '../../models/fileToString';
 
 interface Props {
@@ -148,7 +148,7 @@ const SetUpPopup = ({ PORT, onClose }: Props) => {
                             ))}
                         </div>
                     ) : null}
-                    <ImgField setSelectedImages={setImg} selectedImages={img} max={1} />
+                    <FileField setSelectedImages={setImg} selectedImages={img} type='img' max={1} />
                     <span className='w-full text-center text-red-500'>
                         {error.isError ? (error.text) : null}
                     </span>

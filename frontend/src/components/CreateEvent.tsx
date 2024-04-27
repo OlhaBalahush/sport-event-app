@@ -2,7 +2,7 @@ import Header from "./Reusable/Header";
 import Footer from "./Reusable/Footer";
 import { useAuth } from "./context/AuthContext";
 import { FormEvent, useEffect, useState } from "react";
-import ImgField from "./Reusable/AddImgField";
+import FileField from "./Reusable/AddFileField";
 import { useNavigate } from "react-router-dom";
 import { Category } from "../models/category";
 import { filesToBase64Array } from "../models/fileToString";
@@ -179,7 +179,7 @@ const CreateEvent = ({ PORT }: Props) => {
                             ))}
                         </div>
                     ) : null}
-                    <ImgField setSelectedImages={setImgs} selectedImages={imgs} max={6}/>
+                    <FileField setSelectedImages={setImgs} selectedImages={imgs} type='img' max={6}/>
                     <div className="md:grid md:grid-cols-2 gap-5">
                         <div className='flex flex-col gap-5'>
                             <label htmlFor="location" className="">Location:</label>

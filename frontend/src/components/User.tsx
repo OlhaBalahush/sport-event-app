@@ -11,6 +11,7 @@ import { useAuth } from "./context/AuthContext";
 import EventItem from "./Reusable/EventItem";
 import ChallengeItem from "./Reusable/ChallengeItem";
 import SettingsPopup from "./Reusable/SettingsPopup";
+import RequestPopup from "./Reusable/RequestPopup";
 
 interface Props {
     PORT: string;
@@ -153,9 +154,6 @@ const UserPage = ({ PORT }: Props) => {
     return (
         <div className="w-full absolute min-h-screen">
             <Header PORT={PORT} />
-            {isSettings ? (
-                <SettingsPopup PORT={PORT} onClose={toogleSettings} />
-            ) : null}
             <div className="mx-12 xl:mx-40 my-14 py-12 flex flex-col items-center gap-8">
                 <div className="w-full grid md:grid-cols-4 gap-5 md:gap-10">
                     <div style={{ height: 'fit-content' }}
@@ -273,6 +271,10 @@ const UserPage = ({ PORT }: Props) => {
                     </div>
                 </div>
             </div>
+            {isSettings ? (
+                <SettingsPopup PORT={PORT} onClose={toogleSettings} />
+            ) : null}
+            <RequestPopup PORT={PORT} onClose={toogleRequestPopup} />
             <div className="hidden md:block">
                 <Footer />
             </div>
