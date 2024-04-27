@@ -12,8 +12,8 @@ const SettingsPopup = ({ onClose, PORT }: Props) => {
     const { curruser } = useAuth();
     const [img, setImg] = useState<string>(curruser ? curruser.img : '');
     const [name, setName] = useState<string>(curruser ? curruser.username : '');
-    const [level, setLevel] = useState<string>(curruser ? curruser.level : '');
     const sugLevels = ['Begginer', 'Intermediate', 'Advanced']
+    const [level, setLevel] = useState<string>(curruser ? curruser.level : sugLevels[0]);
     const [category, setCategory] = useState<string>('');
     const [sugCategories, setSugCategories] = useState<Category[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -69,6 +69,7 @@ const SettingsPopup = ({ onClose, PORT }: Props) => {
         // Check if category is not already added and if it exists in sugCategories
         if (selectedCategory && !categories.find(cat => cat.id === selectedCategory.id)) {
             setCategories(prev => [...prev, selectedCategory]);
+            setCategory('')
         }
     };
 
@@ -81,7 +82,7 @@ const SettingsPopup = ({ onClose, PORT }: Props) => {
 
     const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('level: ', level)
+
         await fetch(`${PORT}/api/v1/jwt/users/update`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -164,6 +165,7 @@ const SettingsPopup = ({ onClose, PORT }: Props) => {
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
                                 className='w-full bg-transparent border-transparent hover:border-transparent active:border-transparent rounded-lg'>
+                                <option disabled key={-1} value={''}>Choose category</option>
                                 {sugCategories.map((item, _) => (
                                     <option key={item.id} value={item.name}>{item.name}</option>
                                 ))}

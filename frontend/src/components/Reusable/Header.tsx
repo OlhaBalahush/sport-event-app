@@ -5,6 +5,7 @@ import LogIn from "../Authentication/LogIn";
 import SignUp from "../Authentication/SignUp";
 import { useAuth } from "../context/AuthContext";
 import NotificationsBell from "../assets/NotificationsBell";
+import SetUpPopup from "../Authentication/SetUp";
 
 interface Props {
     PORT: string;
@@ -18,6 +19,7 @@ const Header = ({ PORT }: Props) => {
 
     const [showSinUp, setShowSignUp] = useState(false);
     const [showLogIn, setShowLogIn] = useState(false);
+    const [showSetUp, setShowSetUp] = useState(false);
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -51,10 +53,20 @@ const Header = ({ PORT }: Props) => {
         console.log('submit')
     }
 
-    const toogleSignUpPopup = () => {
+    const toogleSignUpPopup = (res: boolean) => {
         setShowMenu(false)
         setShowLogIn(false)
         setShowSignUp((prev) => !prev)
+        if (res) {
+            console.log('setup')
+            toogleSetUpPopup()
+        }
+    }
+
+    const toogleSetUpPopup = () => {
+        setShowMenu(false)
+        // setShowSignUp(false)
+        setShowSetUp((prev) => !prev)
     }
 
     const toogleLogInPopup = () => {
@@ -126,7 +138,7 @@ const Header = ({ PORT }: Props) => {
                             <button onClick={(e) => toogleLogInPopup()} className="flex items-center justify-center bg-custom-bg text-custom-dark border border-custom-dark h-[40px] md:h-full w-full md:w-40 rounded-lg hover:bg-custom-light-blue hover:border-custom-bg hover:text-white active:bg-blue-900">
                                 Log In
                             </button>
-                            <button onClick={(e) => toogleSignUpPopup()} className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] md:h-full w-full md:w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                            <button onClick={(e) => toogleSignUpPopup(false)} className="flex items-center justify-center bg-custom-dark-blue text-white h-[40px] md:h-full w-full md:w-40 rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
                                 Sign Up
                             </button>
                         </div>
@@ -145,7 +157,10 @@ const Header = ({ PORT }: Props) => {
                 <LogIn PORT={PORT} onClose={toogleLogInPopup} onChange={onChange} />
             ) : null}
             {!isLoggedIn && showSinUp ? (
-                <SignUp PORT={PORT} onClose={toogleSignUpPopup} onChange={onChange} />
+                <SignUp PORT={PORT} onClose={(res) => toogleSignUpPopup(res)} onChange={onChange} />
+            ) : null}
+            {isLoggedIn && showSetUp ? (
+                <SetUpPopup PORT={PORT} onClose={toogleSetUpPopup}/>
             ) : null}
         </>
     )

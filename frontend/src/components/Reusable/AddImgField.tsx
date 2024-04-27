@@ -4,17 +4,18 @@ import DownloadIcon from "../assets/Download";
 interface Props {
     setSelectedImages: Dispatch<SetStateAction<File[]>>;
     selectedImages: File[];
+    max: number;
 } 
 
-const ImgField = ({setSelectedImages, selectedImages}: Props) => {
+const ImgField = ({setSelectedImages, selectedImages, max}: Props) => {
     const [dragActive, setDragActive] = useState(false);
     const [error, setError] = useState<{ isError: boolean, text: string }>({ isError: false, text: "" });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (selectedImages.length === 6) {
+        if (selectedImages.length === max) {
             setError({
                 isError: true,
-                text: "Only 6 pictures can be uploaded"
+                text: `Only ${max} pictures can be uploaded`
             });
             return
         }
@@ -31,10 +32,10 @@ const ImgField = ({setSelectedImages, selectedImages}: Props) => {
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         setDragActive(false);
-        if (selectedImages.length === 6) {
+        if (selectedImages.length === max) {
             setError({
                 isError: true,
-                text: "Only 6 pictures can be uploaded"
+                text: `Only ${max} pictures can be uploaded`
             });
             return
         }

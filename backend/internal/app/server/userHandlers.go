@@ -19,14 +19,15 @@ func (s *server) handlerCreateUser() http.HandlerFunc {
 			return
 		}
 
-		if _, err := s.store.User().Create(user); err != nil {
+		id, err := s.store.User().Create(user)
+		if err != nil {
 			s.error(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
 
 		expiration := time.Now().Add(5 * time.Hour)
 		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
-		claims := jwttoken.NewClaims(user.ID, expiration.Unix())
+		claims := jwttoken.NewClaims(id, expiration.Unix())
 		token, err := alg.Encode(claims)
 		if err != nil {
 			s.error(w, r, http.StatusInternalServerError, err)
@@ -45,6 +46,7 @@ func (s *server) handlerCreateUser() http.HandlerFunc {
 
 		http.SetCookie(w, &cookie)
 
+		user.Sanitize()
 		s.respond(w, r, http.StatusCreated, Response{
 			Message: "Successfully created user!",
 			Data:    user,
@@ -58,6 +60,20 @@ func (s *server) handlerUpdateUser() http.HandlerFunc {
 		if err := json.NewDecoder(r.Body).Decode(user); err != nil {
 			s.error(w, r, http.StatusBadRequest, err)
 			return
+		}
+
+		userId := r.Context().Value(ctxUserID).(string)
+		if user.ID == "" {
+			user.ID = userId
+		}
+
+		if user.Role == "" {
+			u, err := s.store.User().FindByID(userId)
+			if err != nil {
+				s.error(w, r, http.StatusUnprocessableEntity, err)
+				return
+			}
+			user.Role = u.Role
 		}
 
 		if err := s.store.User().Update(user); err != nil {

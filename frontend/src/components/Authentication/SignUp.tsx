@@ -8,7 +8,7 @@ import { User } from '../../models/user';
 
 interface Props {
     PORT: string;
-    onClose: () => void;
+    onClose: (res: boolean) => void;
     onChange: () => void;
 }
 
@@ -38,7 +38,7 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
             if (response.ok) {
                 let curruser: User = res.data as User;
                 login(curruser);
-                onClose();
+                onClose(true);
             } else {
                 setError({
                     isError: true,
@@ -57,7 +57,7 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
     return (
         <div className="fixed inset-0 overflow-y-auto flex items-start lg:items-center justify-center z-50 bg-opacity-50 bg-gray-900">
             <div className="relative flex flex-col gap-5 bg-custom-white py-8 px-5 md:p-8 rounded-t-2xl min-w-[330px] w-[540px] mt-20 lg:mt-0 md:rounded-2xl">
-                <button className='absolute md:right-8 right-5' onClick={onClose}>✕</button>
+                <button className='absolute md:right-8 right-5' onClick={() => onClose(false)}>✕</button>
                 <div className='flex flex-col items-center gap-5'>
                     <Logo />
                     <h1 className='text-center font-bold text-h'>Sign Up</h1>
@@ -132,18 +132,18 @@ const SignUp = ({ PORT, onClose, onChange }: Props) => {
                     <span className="text-custom-gray">Already a user?</span>
                     <button onClick={onChange} className='text-custom-dark px-2 md:h-full hover:text-custom-dark-blue'>Log in</button>
                 </div>
-                <div className='h-0 flex justify-center items-center border-b'>
+                {/* <div className='h-0 flex justify-center items-center border-b'>
                     <div className='bg-custom-white px-4 text-custom-gray text-add'>or</div>
-                </div>
+                </div> */}
                 {/* TODO add func */}
-                <div className='flex flex-row items-center border border-custom-dark rounded-lg py-2 px-5 hover:bg-custom-bg'>
+                {/* <div className='flex flex-row items-center border border-custom-dark rounded-lg py-2 px-5 hover:bg-custom-bg'>
                     <Google />
                     <div className='md:px-20 px-5'>Sign Up with Google</div>
                 </div>
                 <div className='flex flex-row items-center border border-custom-dark rounded-lg py-2 px-5 hover:bg-custom-bg'>
                     <Github />
                     <div className='md:px-20 px-5'>Sign Up with Github</div>
-                </div>
+                </div> */}
             </div>
         </div>
     )
