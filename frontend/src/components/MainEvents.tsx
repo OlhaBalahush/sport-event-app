@@ -16,6 +16,7 @@ interface Props {
 const MainPage = ({ PORT }: Props) => {
     const { isLoggedIn, curruser } = useAuth();
     const [events, setEvents] = useState<Event[]>([]);
+    const [currEvents, setCurrEvents] = useState<Event[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [searchResults, setSearchResults] = useState([]);
 
@@ -31,6 +32,7 @@ const MainPage = ({ PORT }: Props) => {
                 console.log(res)
                 if (response.ok) {
                     setEvents(res.data)
+                    setCurrEvents(res.data);
                 } else {
                     console.error(res.error)
                 }
@@ -63,7 +65,15 @@ const MainPage = ({ PORT }: Props) => {
     }, []);
 
     const handleSearch = (query: string) => {
-        //  TODO Perform filtering based on the query
+        console.log(query)
+        const newEvents = events.filter(event =>
+            event.name.toLowerCase().includes(query.toLowerCase()) ||
+            event.description.toLowerCase().includes(query.toLowerCase()) ||
+            event.location.toLowerCase().includes(query.toLowerCase()) ||
+            event.preparation.toLowerCase().includes(query.toLowerCase()) ||
+            event.requirements.toLowerCase().includes(query.toLowerCase())
+        );
+        setCurrEvents(newEvents);
     };
 
     const handleCategory = async (category: string) => {
@@ -104,9 +114,9 @@ const MainPage = ({ PORT }: Props) => {
                     {isLoggedIn && curruser != null && curruser.role != "user" ? (
                         <NewItemField type={"event"} />
                     ) : null}
-                    {events != null ? (
+                    {currEvents != null ? (
                         <>
-                            {events.map((item, index) => (
+                            {currEvents.map((item, index) => (
                                 <EventItem key={index} event={item} />
                             ))}
                         </>
