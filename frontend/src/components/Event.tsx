@@ -326,15 +326,18 @@ const EventPage = ({ PORT }: Props) => {
                             e.target.src = `https://api.dicebear.com/8.x/shapes/svg?seed=${event?.id}`;
                         }} />
                 </div>
-                <div className="w-full flex flex-col gap-4 md:flex-row md:gap-12">
-                    <div className="flex felx-row gap-3 items-center">
-                        <LocationIcon />
-                        {event?.location}onSubmitFeedback
+                <div className="w-full flex flex-col gap-4 md:flex-row md:justify-between">
+                    <div className="flex flex-col gap-4 md:flex-row md:gap-12">
+                        <div className="flex felx-row gap-3 items-center">
+                            <LocationIcon />
+                            {event?.location}
+                        </div>
+                        <div className="flex felx-row gap-3 items-center">
+                            <CalendarIcon color={"#131315"} />
+                            {timeForm({ rawDate: event?.dateStart || "" })}
+                        </div>
                     </div>
-                    <div className="flex felx-row gap-3 items-center">
-                        <CalendarIcon color={"#131315"} />
-                        {timeForm({ rawDate: event?.dateStart || "" })}
-                    </div>
+                    <div className="bg-custom-light-blue px-4 py-1 rounded-lg text-custom-white">For {event?.level}</div>
                 </div>
                 <div className="w-full flex flex-col gap-5">
                     <h2 className="font-bold text-h-2">Overview</h2>

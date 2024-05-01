@@ -25,6 +25,8 @@ const CreateEvent = ({ PORT }: Props) => {
     const [requirements, setRequirements] = useState<string>('');
     const [preparation, setPreparation] = useState<string>('');
     const [price, setPrice] = useState<number>(0);
+    const [level, setLevel] = useState<string>('');
+    const sugLevels = ['Begginer', 'Intermediate', 'Advanced'];
 
     const [error, setError] = useState<{ isError: boolean, text: string }>({ isError: false, text: "" });
 
@@ -89,6 +91,7 @@ const CreateEvent = ({ PORT }: Props) => {
                     Valid: true
                 },
                 categories,
+                level,
             }),
         }).then(async response => {
             const res = await response.json();
@@ -137,6 +140,20 @@ const CreateEvent = ({ PORT }: Props) => {
                             onChange={(e) => setName(e.target.value)}
                             required
                         />
+                    </div>
+                    <div className='flex flex-col gap-5'>
+                        <label htmlFor="level" className="">Expected level:</label>
+                        <div className={`w-full h-[42px] bg-white flex flex-row gap-5 items-center border border-custom-dark rounded-lg px-4 py-2`}>
+                            <select
+                                id="level"
+                                value={level}
+                                onChange={(e) => setLevel(e.target.value)}
+                                className='w-full bg-transparent border-transparent hover:border-transparent active:border-transparent rounded-lg'>
+                                {sugLevels.map((item, index) => (
+                                    <option key={index} value={item}>{item}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                     <div className='flex flex-col gap-5'>
                         <label htmlFor="overview" className="">Overview:</label>

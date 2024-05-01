@@ -108,7 +108,7 @@ const SetUpPopup = ({ PORT, onClose }: Props) => {
                         <label htmlFor="level" className="">Level:</label>
                         <div className={`w-full h-[42px] bg-white flex flex-row gap-5 items-center border rounded-lg px-4 py-2`}>
                             <select
-                                id="categories"
+                                id="level"
                                 value={level}
                                 onChange={(e) => setLevel(e.target.value)}
                                 className='w-full bg-transparent border-transparent hover:border-transparent active:border-transparent rounded-lg'>

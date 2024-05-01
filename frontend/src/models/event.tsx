@@ -13,6 +13,7 @@ export type Event = {
     price: {
         Float64: number,
         Valid: boolean
-    };
+    },
+    level: string,
     imgs: string[] | null;
 }

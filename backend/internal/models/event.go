@@ -17,6 +17,7 @@ type Event struct {
 	Requirements string          `db:"requirements" json:"requirements"`
 	Preparation  string          `db:"preparation" json:"preparation"`
 	Price        sql.NullFloat64 `db:"price" json:"price"`
+	Level        string          `db:"level" json:"level"`
 	Attendees    int             `json:"attendees"`
 	Imgs         []string        `db:"imgs" json:"imgs"`
 	CreatedAt    time.Time       `db:"created_at" json:"createdAt"`
