@@ -53,7 +53,7 @@ const NRequestPopup = ({ PORT, onClose, request, user }: Props) => {
                 </div>
                 <div className='w-full flex flex-col gap-5'>
                     <a href={`/user/${user?.id}`} className="flex flex-row gap-5 items-center hover:text-custom-dark-blue">
-                        <div className="h-full w-[50px] rounded-full overflow-hidden">
+                        <div className="h-full w-[50px] flex items-center justify-center aspect-square rounded-full overflow-hidden">
                             <img
                                 className="min-w-full max-h-full object-cover"
                                 src={`${user?.img}`}

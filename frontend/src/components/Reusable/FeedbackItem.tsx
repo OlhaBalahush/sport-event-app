@@ -42,7 +42,7 @@ const FeedbackItem = ({ PORT, feedback }: Props) => {
             <div className='w-full flex flex-col gap-3 py-[30px]'>
                 <div className='w-full flex flex-col md:flex-row gap-3 md:justify-between'>
                     <a href={`/user/${feedback.userId}`} className="flex flex-row items-center gap-2 h-full hover:text-custom-dark-blue">
-                        <div className="h-full w-8 rounded-full overflow-hidden">
+                        <div className="h-8 flex items-center justify-center aspect-square rounded-full overflow-hidden">
                             <img
                                 className="min-w-full max-h-full object-cover"
                                 src={`${author?.img}`} //todo

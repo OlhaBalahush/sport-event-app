@@ -8,15 +8,17 @@ const AttendantItem = ({ attendant }: Props) => {
 
     return (
         <a href={`/user/${attendant.id}`} className="h-auto max-w-[80px] flex flex-col gap-2 items-center hover:text-custom-dark-blue">
-            <div className="w-[80px] rounded-full overflow-hidden">
+            <div className="w-[80px] aspect-square flex items-center justify-center rounded-full overflow-hidden">
                 <img
-                    className="min-w-full max-h-full object-cover rounded-full"
+                    className="w-full h-full object-cover rounded-full"
                     src={`${attendant.img}`}
                     onError={(e: any) => {
                         e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${attendant.id}`;
-                    }} />
+                    }}
+                    alt="Attendant"
+                />
             </div>
-            <span className="w-[80px] truncate overflow-hidden">
+            <span className="text-center w-[80px] truncate overflow-hidden">
                 {attendant.username}
             </span>
             {attendant.points != 0 ? (

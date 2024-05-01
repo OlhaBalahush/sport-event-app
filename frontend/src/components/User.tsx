@@ -178,13 +178,15 @@ const UserPage = ({ PORT }: Props) => {
                 <div className="w-full grid md:grid-cols-4 gap-5 md:gap-10">
                     <div style={{ height: 'fit-content' }}
                         className="md:col-span-1 md:sticky md:top-[calc(56px+48px)] flex flex-col gap-5">
-                        <div className="h-full w-full rounded-full overflow-hidden">
+                        <div className="rounded-full overflow-hidden aspect-square flex items-center justify-center">
                             <img
-                                className="min-w-full max-h-full object-cover"
+                                className="w-full object-cover"
                                 src={`${user?.img}`}
                                 onError={(e: any) => {
                                     e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${user?.id}`;
-                                }} />
+                                }}
+                                alt="User"
+                            />
                         </div>
                         <span className="w-full text-center">{user?.fullname} (AKA {user?.username})</span>
                         {user?.id === curruser?.id ? (

@@ -185,7 +185,7 @@ const ChallengePage = ({ PORT }: Props) => {
                     <div className="w-full flex flex-col items-center md:flex-row md:items-end justify-between md:pl-8 pt-[175px]">
                         <a href={challenge?.organizationLink}
                             className="flex flex-col items-center md:flex-row gap-5 md:items-end w-auto text-custom-dark md:h-full hover:text-custom-dark-blue">
-                            <div className="h-[80px] w-[80px] rounded-lg overflow-hidden">
+                            <div className="h-[80px] aspect-square flex items-center justify-center rounded-lg overflow-hidden">
                                 <img
                                     className="min-w-full max-h-full object-cover"
                                     src={`${challenge?.img}`}

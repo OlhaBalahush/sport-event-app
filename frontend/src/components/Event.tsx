@@ -97,7 +97,7 @@ const EventPage = ({ PORT }: Props) => {
             if (response.ok) {
                 if (res.data != null) {
                     setAttendants(res.data)
-                } 
+                }
             } else {
                 console.error(res.error)
             }
@@ -115,7 +115,8 @@ const EventPage = ({ PORT }: Props) => {
             const res = await response.json();
             if (response.ok) {
                 if (res.data != null) {
-                    setEvents(res.data)
+                    const firstThreeEntities = res.data.slice(0, 3);
+                    setEvents(firstThreeEntities);
                 }
             } else {
                 console.error(res.error)
@@ -301,7 +302,7 @@ const EventPage = ({ PORT }: Props) => {
                 <h1 className="font-bold text-h text-center">{event?.name}</h1>
                 <div className="w-full flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
                     <a href={`/user/${organizer?.id}`} className="flex flex-row gap-5 items-center hover:text-custom-dark-blue">
-                        <div className="h-full w-[50px] rounded-full overflow-hidden">
+                        <div className="aspect-square w-[50px] flex items-center justify-center rounded-full overflow-hidden">
                             <img
                                 className="min-w-full max-h-full object-cover"
                                 src={`${organizer?.img}`}
@@ -320,9 +321,10 @@ const EventPage = ({ PORT }: Props) => {
                 <div className="w-full">
                     <img
                         className="min-w-full max-h-[400px] object-cover"
-                        src={`${imgs != null ?
-                            `${imgs[0]}`
-                            : `https://api.dicebear.com/8.x/shapes/svg?seed=${event?.id}`}`} />
+                        src={`${imgs[0]}`}
+                        onError={(e: any) => {
+                            e.target.src = `https://api.dicebear.com/8.x/shapes/svg?seed=${event?.id}`;
+                        }} />
                 </div>
                 <div className="w-full flex flex-col gap-4 md:flex-row md:gap-12">
                     <div className="flex felx-row gap-3 items-center">
@@ -365,7 +367,7 @@ const EventPage = ({ PORT }: Props) => {
                 <div className="w-full flex flex-col gap-5">
                     <h2 className="font-bold text-h-2">Recommendations for you</h2>
                     {events.length != 0 ? (
-                        <div className="w-full flex flex-wrap justify-between gap-x-5 gap-y-12">
+                        <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
                             {events.map((item, index) => (
                                 <EventItem key={index} event={item} />
                             ))}

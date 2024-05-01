@@ -125,7 +125,7 @@ const SettingsPopup = ({ onClose, PORT }: Props) => {
                     className='w-full flex flex-col gap-5'
                     onSubmit={handleUpdate}>
                     <div className="w-full flex flex-row gap-5 items-center">
-                        <div className="h-full w-[50px] rounded-full overflow-hidden">
+                        <div className="h-full w-[50px] flex items-center justify-center rounded-full overflow-hidden aspect-square">
                             <img
                                 className="min-w-full max-h-full object-cover"
                                 src={`${curruser?.img}`}

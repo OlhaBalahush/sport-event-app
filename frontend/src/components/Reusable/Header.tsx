@@ -147,7 +147,7 @@ const Header = ({ PORT }: Props) => {
                                 <NotificationsBell />
                             </a>
                             <a href={`/user/${curruser.id}`} className="flex flex-row items-center gap-2 h-full hover:text-custom-dark-blue">
-                                <div className="h-full w-8 rounded-full overflow-hidden">
+                                <div className="h-full w-8 aspect-square flex items-center justify-center rounded-full overflow-hidden">
                                     <img
                                         className="min-w-full max-h-full object-cover"
                                         src={`${curruser.img}`}
