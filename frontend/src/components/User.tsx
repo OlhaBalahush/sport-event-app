@@ -12,6 +12,7 @@ import EventItem from "./Reusable/EventItem";
 import ChallengeItem from "./Reusable/ChallengeItem";
 import SettingsPopup from "./Reusable/SettingsPopup";
 import RequestPopup from "./Reusable/RequestPopup";
+import BarChart from "./Reusable/Progress";
 
 interface Props {
     PORT: string;
@@ -247,8 +248,15 @@ const UserPage = ({ PORT }: Props) => {
                         ) : null}
                     </div>
                     <div className="md:col-span-3 flex flex-col gap-5">
-                        <h2 className="font-bold text-h-2">Progress</h2>
-                        <div className="w-full h-[200px] bg-custom-light-blue text-white">canvas</div>
+                        <div className="w-full flex flex-row items-center justify-between">
+                            <h2 className="font-bold text-h-2">Progress</h2>
+                            <div className="flex flex-row gap-5 items-center justify-between">
+                                <button>{'<'}</button>
+                                2024
+                                <button>{'>'}</button>
+                            </div>
+                        </div>
+                        <BarChart year={2024} eventData={[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]} challengeData={[0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0]} />
                         <div className="w-full flex flex-row items-center justify-between">
                             <h2 className="font-bold text-h-2">Events</h2>
                             <div className="flex flex-row gap-5 items-center justify-between">

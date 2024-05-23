@@ -64,7 +64,7 @@ const Notifications = ({ PORT }: Props) => {
                     {curruser?.role === 'admin' ? (
                         <div className="w-full flex flex-col gap-5">
                             <h2 className="text-h-2 font-bold">Requests</h2>
-                            {unreadN.length != 0 ? (
+                            {requests.length != 0 ? (
                                 <>
                                     {requests.map((item, index) => (
                                         <NotificationItem key={index} PORT={PORT} isRequest={true} request={item} removeEntity={(id) => handleUpdateRequests(id)}/>
