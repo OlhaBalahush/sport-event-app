@@ -47,13 +47,6 @@ const BarChart: React.FC<BarChartProps> = ({ year, eventData, challengeData }) =
     scales: {
       y: {
         beginAtZero: true,
-        // ticks: {
-        //   callback: function(value: any) {
-        //     if (Number.isInteger(value)) {
-        //       return value.toString();
-        //     }
-        //   }
-        // }
       },
       x: {
         beginAtZero: true,

@@ -55,7 +55,7 @@ const EventPage = ({ PORT }: Props) => {
     }, []);
 
     useEffect(() => {
-        if (event != null) { // ?
+        if (event != null) {
             takeOrganizer();
             takeAttendants();
             takeRecomendations();
@@ -66,7 +66,7 @@ const EventPage = ({ PORT }: Props) => {
     }, [event]);
 
     useEffect(() => {
-        if (event != null && curruser != null) { // ?
+        if (event != null && curruser != null) {
             checkJoining();
             checkSaving();
         }
@@ -106,7 +106,7 @@ const EventPage = ({ PORT }: Props) => {
         })
     }
 
-    // TODO how to make list of recommendations
+    // TODO make list of recommendations
     const takeRecomendations = async () => {
         await fetch(`${PORT}/api/v1/events`, {
             method: 'GET',
@@ -213,8 +213,6 @@ const EventPage = ({ PORT }: Props) => {
     }
 
     const handleJoining = async () => {
-        // TODO handle popups
-        // TODO check if user already saved the event
         if (isLoggedIn && curruser != null) {
             await fetch(`${PORT}/api/v1/jwt/events/join/${event?.id}`, {
                 method: 'GET',
@@ -231,7 +229,6 @@ const EventPage = ({ PORT }: Props) => {
             })
         } else {
             console.log('login first')
-            // TODO toogle popup
         }
     }
 
@@ -271,7 +268,7 @@ const EventPage = ({ PORT }: Props) => {
             rate: rate,
             createdAt: ''
         }
-        // console.log(`newFeedback: ${newFeed}`);
+    
         await fetch(`${PORT}/api/v1/feedback/create`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },

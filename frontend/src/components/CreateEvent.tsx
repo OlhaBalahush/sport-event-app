@@ -101,7 +101,7 @@ const CreateEvent = ({ PORT }: Props) => {
             } else {
                 setError({
                     isError: true,
-                    text: res.error
+                    text: res.message
                 });
             }
         }).catch(error => {
