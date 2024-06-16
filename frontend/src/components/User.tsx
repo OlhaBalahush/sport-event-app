@@ -256,7 +256,13 @@ const UserPage = ({ PORT }: Props) => {
                                 <button>{'>'}</button>
                             </div>
                         </div>
-                        <BarChart year={2024} eventData={[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]} challengeData={[0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0]} />
+                        {user?.role == 'admin' ? (
+                            <BarChart year={2024} eventData={[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]} challengeData={[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]} />
+                        ) : user?.role == 'organizer' ? (
+                            <BarChart year={2024} eventData={[0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0]} challengeData={[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]} />
+                        ) : (
+                            <BarChart year={2024} eventData={[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]} challengeData={[0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0]} />
+                        )}
                         <div className="w-full flex flex-row items-center justify-between">
                             <h2 className="font-bold text-h-2">Events</h2>
                             <div className="flex flex-row gap-5 items-center justify-between">

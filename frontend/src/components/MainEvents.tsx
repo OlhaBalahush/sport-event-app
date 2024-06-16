@@ -181,7 +181,7 @@ const MainPage = ({ PORT }: Props) => {
                     ))}
                 </div>
                 <div className="w-full grid 2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
-                    {isLoggedIn && curruser != null && curruser.role != "user" ? (
+                    {isLoggedIn && curruser != null && curruser.role == "organizer" ? (
                         <NewItemField type={"event"} />
                     ) : null}
                     {currEvents != null ? (
