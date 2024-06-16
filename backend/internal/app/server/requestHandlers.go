@@ -31,7 +31,12 @@ func (s *server) handleGetNumAllNotifications() http.HandlerFunc {
 			s.error(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
-		num := len(notifications)
+		num := 0
+		for _, n := range notifications {
+			if !n.Status {
+				num += 1
+			}
+		}
 
 		user, err := s.store.User().FindByID(userId)
 		if user.Role == "admin" {

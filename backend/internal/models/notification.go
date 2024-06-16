@@ -2,7 +2,7 @@ package models
 
 type Notification struct {
 	ID         int              `db:"id" json:"id"`
-	ReceiverID int              `db:"receiver_id" json:"receiverID"`
+	ReceiverID string           `db:"receiver_id" json:"receiverID"`
 	Data       NotificationData `db:"data" json:"data"`
 	Status     bool             `db:"status" json:"status"` // read or unread
 	CreatedAt  string           `db:"created_at" json:"createdAt"`

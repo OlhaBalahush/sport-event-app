@@ -1,6 +1,7 @@
 package sqlstore
 
 import (
+	"encoding/json"
 	"log"
 	"sport-event-app/backend/internal/models"
 )
@@ -67,9 +68,16 @@ func (nr *NotificationRepository) Read(userID string) ([]*models.Notification, e
 	var notifications []*models.Notification
 	for rows.Next() {
 		notification := &models.Notification{}
+		var rawData string
 		// TODO check Data
-		if err := rows.Scan(&notification.ID, &notification.ReceiverID, &notification.Data, &notification.Status, &notification.CreatedAt); err != nil {
+		if err := rows.Scan(&notification.ID, &notification.ReceiverID, &rawData, &notification.Status, &notification.CreatedAt); err != nil {
 			log.Println("Failed to scan row:", err)
+			return nil, err
+		}
+
+		err := json.Unmarshal([]byte(rawData), &notification.Data)
+		if err != nil {
+			log.Println("Error unmarshalling JSON:", err)
 			return nil, err
 		}
 		notifications = append(notifications, notification)
