@@ -21,8 +21,8 @@ const Notifications = ({ PORT }: Props) => {
         if (isLoggedIn && curruser != null) {
             if (curruser.role === 'admin') {
                 takeRequests()
-                takeNotifications()
             }
+            takeNotifications()
         }
     }, [curruser])
 
@@ -45,8 +45,29 @@ const Notifications = ({ PORT }: Props) => {
         })
     }
     
-    const takeNotifications = () => {
-        console.log('take notifications');
+    const takeNotifications = async () => {
+        await fetch(`${PORT}/api/v1/jwt/notifications`, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(async response => {
+            const res = await response.json();
+            console.log(res)
+            if (response.ok) {
+                if (res.data != null) {
+                    res.data.forEach((not: { status: boolean; }) => {
+                        if (not.status = true) {
+                            setReadN(res.data)
+                        } else {
+                            setUnreadN(res.data)
+                        }
+                    });
+                }
+            } else {
+                console.error(res.error)
+            }
+        }).catch(error => {
+            console.log('Error taking requests:', error);
+        })
     }
 
     const handleUpdateRequests = (id: number) => {
