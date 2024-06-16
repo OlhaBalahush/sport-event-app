@@ -73,12 +73,56 @@ const NotificationItem = ({ PORT, isRequest, notification, request, removeEntity
                         </button>
                     </div>
                     {isRequestPopup && request ? (
-                        <NRequestPopup PORT={PORT} onClose={(res, id) => toogleRequestPopup(res, id)} request={request} user={user}/>
+                        <NRequestPopup PORT={PORT} onClose={(res, id) => toogleRequestPopup(res, id)} request={request} user={user} />
                     ) : null}
                 </>
-            ) : (
-                <div>{notification?.id}</div>
-            )}
+            ) : notification?.data.type === 'recommendation' ? (
+                <div className="flex flex-row justify-between">
+                    <div className="flex flex-row gap-2 items-center">Recommended for you:
+                        <a href={`/user/${notification?.data.userID}`} className="flex flex-row gap-5 items-center hover:text-custom-dark-blue">
+                            {notification?.data.username}
+                        </a>created new event </div>
+                    <a href={`/event/${notification?.data.eventID}`} className="flex flex-row gap-5 items-center hover:text-custom-dark-blue">
+                        {notification?.data.eventName}
+                        <div className="h-full w-[50px] flex items-center justify-center aspect-square rounded-full overflow-hidden">
+                            <img
+                                className="min-w-full max-h-full object-cover"
+                                src={`${user?.img}`}
+                                onError={(e: any) => {
+                                    e.target.src = `https://api.dicebear.com/8.x/shapes/svg?seed=${notification?.data.eventID}`;
+                                }} />
+                        </div>
+                    </a>
+                </div>
+            ) : notification?.data.type === 'joining' ? (
+                <div className="flex flex-row justify-between">
+                    <div className="flex flex-row gap-2 items-center">
+                        <a href={`/user/${notification?.data.userID}`} className="flex flex-row gap-5 items-center hover:text-custom-dark-blue">
+                            <div className="h-full w-[50px] flex items-center justify-center aspect-square rounded-full overflow-hidden">
+                                <img
+                                    className="min-w-full max-h-full object-cover"
+                                    src={`${notification?.data.userImg}`}
+                                    onError={(e: any) => {
+                                        e.target.src = `https://api.dicebear.com/8.x/thumbs/svg?seed=${notification?.data.userID}`;
+                                    }} />
+                            </div>
+                            {notification?.data.username}
+                        </a>
+                        <span> joined your event</span>
+                    </div>
+                    <a href={`/event/${notification?.data.eventID}`} className="flex flex-row gap-5 items-center hover:text-custom-dark-blue">
+                        {notification?.data.eventName}
+                        <div className="h-full w-[50px] flex items-center justify-center aspect-square rounded-full overflow-hidden">
+                            <img
+                                className="min-w-full max-h-full object-cover"
+                                src={`${user?.img}`}
+                                onError={(e: any) => {
+                                    e.target.src = `https://api.dicebear.com/8.x/shapes/svg?seed=${notification?.data.eventID}`;
+                                }} />
+                        </div>
+                    </a>
+                </div>
+            ) : null}
         </div>
     );
 };
