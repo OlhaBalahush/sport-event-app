@@ -226,7 +226,7 @@ const UserPage = ({ PORT }: Props) => {
                                         )}
                                     </button>
                                 ) : curruser?.role === 'organizer' ? (
-                                    <a href='create-event' className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
+                                    <a href='/create-event' className="w-full h-[40px] flex items-center justify-center bg-custom-dark-blue text-white rounded-lg hover:bg-custom-light-blue active:bg-blue-900">
                                         Create event
                                     </a>
                                 ) : (
